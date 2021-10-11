@@ -8,14 +8,18 @@ Backend
 
 - Clonar repositorio
 - Ubicarse en la carpeta backend dentro del proyecto con el comando `cd/` 
-- .. code:: bash
-  $ cd
+.. code:: bash
+
+    $ cd
 - Instalar un virtualenv con el comando
-  .. code:: bash
-  $ pip install virtualenv
+.. code:: bash
+
+    $ pip install virtualenv
 - Crear entorno virtual con el comando
-  .. code:: bash
-  $ virtualenv venv
+.. code:: bash
+
+    $ virtualenv venv
 - Instalar modulos necesarios para la funcionalidad del backend
-  .. code:: bash
-  $ pip install flask flask-cors flask-mysqldb
+.. code:: bash
+
+    $ pip install flask flask-cors flask-mysqldb
