@@ -5,10 +5,10 @@ Social Vulpes vulpes es una red social de imágenes de Vulpes vulpes requiere un
 ## Pasos de instalacion
 
 Backend
-^^^^^^^^^^^^^^^^^^^^^^
 
 - Clonar repositorio
-- Ubicarse en la carpeta backend dentro del proyecto con el comando `cd/` .. code:: bash
+- Ubicarse en la carpeta backend dentro del proyecto con el comando `cd/` 
+- .. code:: bash
   $ cd
 - Instalar un virtualenv con el comando
   .. code:: bash
