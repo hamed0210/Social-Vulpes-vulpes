@@ -1,25 +1,41 @@
 # Social Vulpes vulpes
 
-Social Vulpes vulpes es una red social de imágenes de Vulpes vulpes requiere un sistema en el cual sus usuarios puedan compartir las imágenes deseadas.
+_Social Vulpes vulpes es una red social de imágenes de Vulpes vulpes requiere un sistema en el cual sus usuarios puedan compartir las imágenes deseadas._
 
-## Pasos de instalacion
+## Comenzando 🚀
 
-Backend
+_Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas._
 
-- Clonar repositorio
-- Ubicarse en la carpeta backend dentro del proyecto con el comando `cd/` 
-.. code:: bash
+### Pre-requisitos 📋
 
-    $ cd
-- Instalar un virtualenv con el comando
-.. code:: bash
+_Python v3._
 
-    $ pip install virtualenv
+### Instalación 🔧
+
+_Una serie de ejemplos paso a paso que te dice lo que debes ejecutar para tener un entorno de desarrollo ejecutandose_
+
+- _Clonar repositorio_
+
+- Ubicarse en la carpeta backend dentro del proyecto con el comando
+
+```
+cd
+```
+
+- _Instalar un virtualenv con el comando_
+
+```
+pip install virtualenv
+```
+
 - Crear entorno virtual con el comando
-.. code:: bash
 
-    $ virtualenv venv
+```
+virtualenv venv
+```
+
 - Instalar modulos necesarios para la funcionalidad del backend
-.. code:: bash
 
-    $ pip install flask flask-cors flask-mysqldb
+```
+pip install flask flask-cors flask-mysqldb
+```
