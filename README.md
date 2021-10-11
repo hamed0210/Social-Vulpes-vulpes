@@ -16,7 +16,7 @@ _Una serie de ejemplos paso a paso que te dice lo que debes ejecutar para tener 
 
 - _Clonar repositorio_
 
-- Ubicarse en la carpeta backend dentro del proyecto con el comando
+- _Ubicarse en la carpeta backend dentro del proyecto con el comando_
 
 ```
 cd
@@ -28,13 +28,13 @@ cd
 pip install virtualenv
 ```
 
-- Crear entorno virtual con el comando
+- _Crear entorno virtual con el comando_
 
 ```
 virtualenv venv
 ```
 
-- Instalar modulos necesarios para la funcionalidad del backend
+- _Instalar modulos necesarios para la funcionalidad del backend_
 
 ```
 pip install flask flask-cors flask-mysqldb
