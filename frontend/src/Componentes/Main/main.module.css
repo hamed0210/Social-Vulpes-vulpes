@@ -1,0 +1,19 @@
+.container {
+	position: relative;
+	/* display: flex;
+	align-items: center;
+	justify-content: center; */
+	width: 100%;
+	max-width: 85.375rem;
+	min-height: 100%;
+	height: fit-content;
+	padding: 6.875rem 1.563rem 1.25rem;
+	margin: auto;
+}
+
+/* 1020px */
+@media screen and (min-width: 63.75rem) {
+	.container {
+		padding-top: 4.375rem;
+	}
+}
