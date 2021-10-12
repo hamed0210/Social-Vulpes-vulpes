@@ -8,7 +8,8 @@ _Estas instrucciones te permitirán obtener una copia del proyecto en funcionami
 
 ### Pre-requisitos 📋
 
-_Python v3._
+- _Python v3.9.5_
+- _Mysql_ (Recomendacion XAMPP)
 
 ### Instalación 🔧
 
