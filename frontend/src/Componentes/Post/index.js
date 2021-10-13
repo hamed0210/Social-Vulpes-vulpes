@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
@@ -16,10 +17,12 @@ const Post = () => {
 		<div className={Styles.container}>
 			<div className={Styles.header}>
 				<div className={Styles.user_container}>
-					<div className={Styles.avatar}>
+					<Link className={Styles.avatar} to={'/perfil'}>
 						<img src={'./avatar.jpg'} alt='' />
-					</div>
-					<span className={Styles.username}>hduran10</span>
+					</Link>
+					<Link className={Styles.username} to={'/perfil'}>
+						hduran10
+					</Link>
 				</div>
 				<span className={Styles.opciones}>
 					<FontAwesomeIcon icon={faEllipsisV} />

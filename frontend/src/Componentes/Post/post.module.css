@@ -42,9 +42,20 @@
 	border-radius: 50%;
 }
 
+.avatar {
+	text-decoration: none;
+	color: inherit;
+}
+
 .username {
 	font-size: 14px;
 	font-weight: 500;
+	text-decoration: none;
+	color: inherit;
+}
+
+.username:hover {
+	text-decoration: underline;
 }
 
 .opciones {

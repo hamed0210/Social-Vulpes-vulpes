@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Styles from './login.module.css'
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
+// import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
 
 const Login = ({ history }) => {
 	const [showPassword, setShowPassword] = useState(false)
@@ -36,6 +36,7 @@ const Login = ({ history }) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
+		history.push('/')
 	}
 
 	return (
@@ -84,7 +85,9 @@ const Login = ({ history }) => {
 						<button className={`btn btn_success ${Styles.btn}`} type='submit'>
 							Entrar
 						</button>
-						<Link className={Styles.registrate}>Registrate</Link>
+						<Link className={Styles.link_registro} to={'/registro'}>
+							Registrate
+						</Link>
 					</form>
 				</div>
 			</div>

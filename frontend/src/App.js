@@ -6,15 +6,29 @@ import Styles from 'App.module.css'
 import Header from 'Componentes/Header'
 import Main from 'Componentes/Main'
 import Login from 'Componentes/Login'
+import Registro from 'Componentes/Registro'
 
 function App({ history }) {
+	const { pathname } = history.location
+
 	return (
 		<main className={Styles.conatiner_body}>
 			<Switch>
-				<>
-					<Header />
-					<Main />
-				</>
+				{pathname !== '/login' && pathname !== '/registro' ? (
+					<>
+						<Header />
+						<Main />
+					</>
+				) : (
+					<>
+						<Route exact path='/login'>
+							<Login />
+						</Route>
+						<Route exact path='/registro'>
+							<Registro />
+						</Route>
+					</>
+				)}
 			</Switch>
 		</main>
 	)

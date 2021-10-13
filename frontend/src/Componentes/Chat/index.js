@@ -36,7 +36,12 @@ const Chat = () => {
 								: `${Styles.comentario_btnPublicar}`
 						}
 					>
-						Enviar
+						<svg className={Styles.btn_icon}>
+							<path
+								d='M.01 18L21 9 .01 0 0 7l15 2-15 2 .01 7z'
+								fill='#1E2A78'
+							/>
+						</svg>
 					</button>
 				</div>
 			</div>

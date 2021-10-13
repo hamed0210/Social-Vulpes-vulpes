@@ -1,12 +1,12 @@
 import { useState } from 'react'
-// import { withRouter, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 import Styles from './registro.module.css'
 
-const Registro = () => {
+const Registro = ({ history }) => {
 	const [showPassword, setShowPassword] = useState(false)
 	const [datos, setDatos] = useState({
 		email: '',
@@ -35,6 +35,11 @@ const Registro = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
+		history.push('/')
+	}
+
+	const handleCancel = () => {
+		history.push('/login')
 	}
 
 	return (
@@ -122,7 +127,10 @@ const Registro = () => {
 					<button className={`btn btn_success ${Styles.btn}`} type='submit'>
 						Sign Up
 					</button>
-					<button className={`btn btn_cancel ${Styles.btn}`} type='submit'>
+					<button
+						onClick={handleCancel}
+						className={`btn btn_cancel ${Styles.btn}`}
+					>
 						Cancelar
 					</button>
 				</form>
@@ -131,4 +139,4 @@ const Registro = () => {
 	)
 }
 
-export default Registro
+export default withRouter(Registro)
