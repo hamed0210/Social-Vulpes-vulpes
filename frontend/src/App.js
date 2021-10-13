@@ -5,7 +5,7 @@ import { Switch, Route, withRouter } from 'react-router-dom'
 import Styles from 'App.module.css'
 import Header from 'Componentes/Header'
 import Main from 'Componentes/Main'
-// import Login from 'Componentes/Login'
+import Login from 'Componentes/Login'
 
 function App({ history }) {
 	return (

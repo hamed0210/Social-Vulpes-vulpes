@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Styles from './login.module.css'
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
 
 const Login = ({ history }) => {
 	const [showPassword, setShowPassword] = useState(false)
@@ -42,7 +43,7 @@ const Login = ({ history }) => {
 			<h2 className={Styles.title}>Social Vulpes vulpes</h2>
 			<div className={Styles.login_container}>
 				<div className={Styles.login}>
-					<form onSubmit={handleSubmit} className={Styles.form} action=''>
+					<form onSubmit={handleSubmit} className={Styles.form}>
 						<div className={Styles.inputGroup}>
 							<input
 								onChange={handleInputChange}
@@ -72,6 +73,13 @@ const Login = ({ history }) => {
 									)}
 								</span>
 							</div>
+						</div>
+						<div className={Styles.recordarme_container}>
+							<span className={Styles.recordarme_check} />
+							<label className={Styles.recordarme}>
+								<input type='checkbox' name='recordarme' />
+								Recordame
+							</label>
 						</div>
 						<button className={`btn btn_success ${Styles.btn}`} type='submit'>
 							Entrar

@@ -1,0 +1,19 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	width: 610px;
+	/* margin-bottom: 10px; */
+}
+
+.title {
+	font-family: 'Antonio', sans-serif;
+	font-size: 22px;
+	margin-bottom: 10px;
+}
+
+.mensajes_container {
+	padding: 30px 20px;
+	border-radius: 5px;
+	box-shadow: 0.063rem 0.063rem 0.125rem rgba(0, 0, 0, 0.25),
+		-0.063rem -0.063rem 0.125rem rgba(0, 0, 0, 0.25);
+}

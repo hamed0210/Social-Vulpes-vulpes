@@ -1,0 +1,77 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	width: 610px;
+	margin-bottom: 10px;
+}
+
+.info_usuario_container {
+	display: flex;
+}
+
+.avatar_container {
+	margin-right: 50px;
+	/* width: 50%; */
+}
+
+.avatar {
+	width: 100px;
+	height: 100px;
+	padding: 0.125rem;
+	border: 0.125rem solid var(--color-primary);
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.avatar img {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+.info_usuario {
+	display: flex;
+	flex-direction: column;
+	/* width: 100%; */
+	margin-top: 30px;
+	/* transform: translateY(30px); */
+}
+
+.nombres {
+	font-family: 'Antonio', sans-serif;
+	font-size: 26px;
+}
+
+.username {
+	opacity: 0.6;
+	font-size: 15px;
+	color: var(--color-primary);
+}
+
+.descripcion {
+	margin-top: 10px;
+	font-size: 14px;
+	/* opacity: 0.8; */
+}
+
+.posts {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 10px;
+	margin: 0 auto;
+	margin-top: 50px;
+}
+
+.post {
+	width: 195px;
+	height: 229px;
+}
+
+.post img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
