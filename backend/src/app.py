@@ -16,7 +16,7 @@ CORS(app)
 
 # Inicio de Sesion
 
-@app.route('/signin', methods=['GET'])
+@app.route('/signin', methods=['POST'])
 def signIn():
 	try:
 		username = request.json['username']
@@ -28,7 +28,16 @@ def signIn():
 		if len(data) == 0:
 			return jsonify('Datos ingresados son incorrectos')
 		else:
-			return jsonify(data[0])
+			return jsonify({
+				"id": data[0][0],
+				"nombres" : data[0][1],
+				"apellidos" : data[0][2],
+				"username" : data[0][3],
+				"email" : data[0][4],
+				"role" : data[0][6],
+				"avatar" : data[0][7],
+				"fecha_creacion" : data[0][8],
+			})
 	except:
 		return jsonify('Ocurrió un error al realizar la operación')
 

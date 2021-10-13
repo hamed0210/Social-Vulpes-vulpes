@@ -1,6 +1,9 @@
+import { useSelector } from 'react-redux'
+
 import Styles from './perfil.module.css'
 
 const Perfil = () => {
+	const userStore = useSelector((store) => store.login.user)
 	return (
 		<div className={Styles.container}>
 			<div className={Styles.info_usuario_container}>
@@ -10,8 +13,10 @@ const Perfil = () => {
 					</div>
 				</div>
 				<div className={Styles.info_usuario}>
-					<span className={Styles.nombres}>Hamed Duran Mendoza</span>
-					<span className={Styles.username}>hduran10</span>
+					<span
+						className={Styles.nombres}
+					>{`${userStore.nombres} ${userStore.apellidos}`}</span>
+					<span className={Styles.username}>{userStore.username}</span>
 					<span className={Styles.descripcion}>
 						Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 						eiusmod tempor incididunt ut labore et dolore magna aliqua.

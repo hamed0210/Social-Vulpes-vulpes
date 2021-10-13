@@ -12,6 +12,8 @@ CREATE TABLE usuarios(
 	email VARCHAR(25) NOT NULL,
 	pass CHAR(60) NOT NULL,
 	role ENUM('Superadmin', 'Admin', 'User') NOT NULL DEFAULT 'User',
+	avatar VARCHAR(50),
+	descripcion VARCHAR(200) NOT NULL,
 	fecha_creacion DATETIME DEFAULT current_timestamp,
 	CONSTRAINT unique_combinacion UNIQUE (email),
 	CONSTRAINT unique_combinacion_2 UNIQUE (username),

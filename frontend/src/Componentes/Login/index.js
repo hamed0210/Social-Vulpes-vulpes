@@ -1,17 +1,22 @@
 import { useState } from 'react'
 import { withRouter, Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Styles from './login.module.css'
 import { faEye } from '@fortawesome/free-solid-svg-icons'
 import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
-// import { faCheckSquare } from '@fortawesome/free-solid-svg-icons'
+import { iniciarSesionAccion } from 'redux/loginDuck'
+import useButtonLoader from 'hooks/useButtonLoader'
 
 const Login = ({ history }) => {
+	const dispatch = useDispatch()
+	// const loginStore = useSelector((store) => store.login)
+	const [buttonLoad, setLoading] = useButtonLoader('Entrar')
 	const [showPassword, setShowPassword] = useState(false)
 	const [datos, setDatos] = useState({
-		email: '',
-		pass: '',
+		username: '',
+		password: '',
 	})
 
 	const handlePassword = (e) => {
@@ -36,7 +41,7 @@ const Login = ({ history }) => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		history.push('/')
+		dispatch(iniciarSesionAccion(datos, history, setLoading))
 	}
 
 	return (
@@ -50,9 +55,9 @@ const Login = ({ history }) => {
 								onChange={handleInputChange}
 								className={`${Styles.input} ${Styles.input_email}`}
 								type='text'
-								name='email'
-								id='email'
-								placeholder='Correo electronico'
+								name='username'
+								id='username'
+								placeholder='Username'
 								required
 								autoFocus
 							/>
@@ -61,8 +66,8 @@ const Login = ({ history }) => {
 									onChange={handleInputChange}
 									className={Styles.input}
 									type='password'
-									name='pass'
-									id='pass'
+									name='password'
+									id='password'
 									placeholder='Contraseña'
 									required
 								/>
@@ -82,7 +87,11 @@ const Login = ({ history }) => {
 								Recordame
 							</label>
 						</div>
-						<button className={`btn btn_success ${Styles.btn}`} type='submit'>
+						<button
+							className={`btn btn_success ${Styles.btn}`}
+							type='submit'
+							ref={buttonLoad}
+						>
 							Entrar
 						</button>
 						<Link className={Styles.link_registro} to={'/registro'}>

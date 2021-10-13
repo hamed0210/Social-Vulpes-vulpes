@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCommentAlt } from '@fortawesome/free-regular-svg-icons'
@@ -6,9 +7,11 @@ import { faUser } from '@fortawesome/free-regular-svg-icons'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 
+import { cerrarSesionAccion } from 'redux/loginDuck'
 import Styles from './header.module.css'
 
 function Header({ history }) {
+	const dispatch = useDispatch()
 	const [profile, setProfile] = useState(false)
 
 	const handleMenuProfile = () => {
@@ -20,7 +23,7 @@ function Header({ history }) {
 	}
 
 	const handleCerrarSesion = () => {
-		history.push('/login')
+		dispatch(cerrarSesionAccion(history))
 	}
 
 	return (
