@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import jwt
 import uuid
 from flask_mysqldb import MySQL
 from flask_cors import CORS
@@ -9,6 +10,9 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'social_vulpes_vulpes'
+
+app.config['SECRET_KEY'] = 'z8V42cOhqorMFvnpf5LPQIt3U0Wag9T1'
+
 mysql = MySQL(app)
 CORS(app)
 
@@ -28,7 +32,39 @@ def signIn():
 		if len(data) == 0:
 			return jsonify('Datos ingresados son incorrectos')
 		else:
-			return jsonify({
+			token = jwt.encode({
+            'username': data[0][3],
+						'exp': '1h'
+            # 'exp' : datetime.utcnow() + timedelta(minutes = 30)
+        }, app.config['SECRET_KEY'])
+			
+			return jsonify({'token' : token}), 200
+			# return jsonify({
+			# 	"id": data[0][0],
+			# 	"nombres" : data[0][1],
+			# 	"apellidos" : data[0][2],
+			# 	"username" : data[0][3],
+			# 	"email" : data[0][4],
+			# 	"role" : data[0][6],
+			# 	"avatar" : data[0][7],
+			# 	"fecha_creacion" : data[0][8],
+			# })
+	except:
+		return jsonify('Ocurrió un error al realizar la operación')
+
+
+@app.route('/check', methods=['POST'])
+def check():
+	try:
+		bearer = request.headers['Authorization'].split(' ')
+		token = bearer[1]
+		dataToken = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"], options={"verify_exp": False})
+		cur = mysql.connection.cursor()
+		cur.execute('SELECT * FROM usuarios WHERE username = {0}'.format(dataToken['username']))
+		print('123456789')
+		data = cur.fetchall()
+		cur.close()
+		return jsonify({
 				"id": data[0][0],
 				"nombres" : data[0][1],
 				"apellidos" : data[0][2],
@@ -37,9 +73,10 @@ def signIn():
 				"role" : data[0][6],
 				"avatar" : data[0][7],
 				"fecha_creacion" : data[0][8],
-			})
+			}), 200
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify('Ocurrió un error al realizar la operación'), 400
+
 
 # Usuarios 
 
@@ -326,6 +363,8 @@ def deleteMessage(codigo):
 		return jsonify('Mensaje eliminado correctamente')
 	except:
 		return jsonify('Ocurrió un error al realizar la operación')
+
+
 
 if __name__ == '__main__':
 	app.run(port = 5000, debug= True)

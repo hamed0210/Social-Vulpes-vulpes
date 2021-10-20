@@ -38,5 +38,5 @@ virtualenv venv
 - _Instalar modulos necesarios para la funcionalidad del backend_
 
 ```
-pip install flask flask-cors flask-mysqldb
+pip install flask flask-cors flask-mysqldb PyJWT
 ```

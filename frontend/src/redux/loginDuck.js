@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 // Constantes
-const URI = 'http://localhost:'
-const PORT = '5000'
+const URI = process.env.REACT_APP_URI
+const PORT = process.env.REACT_APP_PORT
 
 const dataInicial = {
 	user: [],
