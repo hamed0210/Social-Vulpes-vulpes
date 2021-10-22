@@ -6,13 +6,13 @@ USE social_vulpes_vulpes;
 
 CREATE TABLE usuarios(
 	id INT(10) UNSIGNED,
+	avatar VARCHAR(50) NOT NULL,
 	nombres VARCHAR(50) NOT NULL,
 	apellidos VARCHAR(50) NOT NULL,
 	username VARCHAR(50) NOT NULL,
 	email VARCHAR(25) NOT NULL,
-	pass CHAR(60) NOT NULL,
+	password CHAR(60) NOT NULL,
 	role ENUM('Superadmin', 'Admin', 'User') NOT NULL DEFAULT 'User',
-	avatar VARCHAR(50),
 	descripcion VARCHAR(200) NOT NULL,
 	fecha_creacion DATETIME DEFAULT current_timestamp,
 	CONSTRAINT unique_combinacion UNIQUE (email),
@@ -22,7 +22,7 @@ CREATE TABLE usuarios(
 
 CREATE TABLE publicaciones(
 	codigo VARCHAR(50),
-	username INT(10) UNSIGNED NOT NULL,
+	id_usuario INT(10) UNSIGNED NOT NULL,
 	descripcion VARCHAR(250) NOT NULL,
 	imagen VARCHAR(50) NOT NULL,
 	fecha_creacion DATETIME DEFAULT current_timestamp,
@@ -31,7 +31,7 @@ CREATE TABLE publicaciones(
 
 CREATE TABLE comentarios(
 	codigo VARCHAR(50),
-	username INT(10) UNSIGNED NOT NULL,
+	id_usuario INT(10) UNSIGNED NOT NULL,
 	comentario VARCHAR(250) NOT NULL,
 	codigo_publicacion VARCHAR(50) NOT NULL,
 	fecha_creacion DATETIME DEFAULT current_timestamp,
@@ -40,8 +40,8 @@ CREATE TABLE comentarios(
 
 CREATE TABLE mensajes(
 	codigo VARCHAR(50),
-	username_enviado INT(10) UNSIGNED NOT NULL,
-	username_recivido INT(10) UNSIGNED NOT NULL,
+	id_usuario_enviado INT(10) UNSIGNED NOT NULL,
+	id_usuario_recivido INT(10) UNSIGNED NOT NULL,
 	mensaje TEXT NOT NULL,
 	fecha_creacion DATETIME DEFAULT current_timestamp,
  	PRIMARY KEY (codigo)
@@ -50,16 +50,16 @@ CREATE TABLE mensajes(
 ALTER TABLE publicaciones 
 	-- ADD PRIMARY KEY (codigo),
 	-- ADD UNIQUE KEY (nombre),
-	ADD FOREIGN KEY (username) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE;
+	ADD FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE comentarios 
 	-- ADD PRIMARY KEY (codigo),
 	-- ADD UNIQUE KEY (nombre),
-	ADD FOREIGN KEY (username) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+	ADD FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	ADD FOREIGN KEY (codigo_publicacion) REFERENCES publicaciones(codigo) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 ALTER TABLE mensajes 
 	-- ADD PRIMARY KEY (codigo),
 	-- ADD UNIQUE KEY (nombre),
-	ADD FOREIGN KEY (username_enviado) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE,
-	ADD FOREIGN KEY (username_recivido) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE;
+	ADD FOREIGN KEY (id_usuario_enviado) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+	ADD FOREIGN KEY (id_usuario_recivido) REFERENCES usuarios(id) ON DELETE RESTRICT ON UPDATE CASCADE;
