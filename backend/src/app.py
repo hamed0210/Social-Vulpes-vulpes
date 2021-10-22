@@ -30,11 +30,12 @@ class Usuarios(mysql.Model):
 	apellidos = mysql.Column(mysql.String(50))
 	username = mysql.Column(mysql.String(50), unique=True)
 	email = mysql.Column(mysql.String(25), unique=True)
-	password = mysql.Column(mysql.String(60))
+	password = mysql.Column(mysql.String(90))
 	role = mysql.Column(mysql.String())
+	descripcion = mysql.Column(mysql.String(200))
 	fecha_creacion = mysql.Column(mysql.DateTime)
 
-	def __init__(self, id, avatar, nombres, apellidos, username, email, password, role, fecha_creacion):
+	def __init__(self, id, avatar, nombres, apellidos, username, email, password, role, descripcion, fecha_creacion):
 			self.id = id
 			self.avatar = avatar
 			self.nombres = nombres
@@ -43,6 +44,7 @@ class Usuarios(mysql.Model):
 			self.email = email
 			self.password = password
 			self.role = role
+			self.descripcion = descripcion
 			self.fecha_creacion = fecha_creacion
 
 mysql.create_all()
@@ -95,8 +97,11 @@ def createUser():
 		email = request.json['email']
 		password = generate_password_hash(request.json['password'], method='sha256')
 		role = request.json['role']
+		descripcion = request.json['descripcion']
 
-		newUsuario = Usuarios(id, avatar, nombres, apellidos, username, email, password, role, datetime.now())
+		print(id, avatar, nombres, apellidos, username, email, password, role, descripcion)
+
+		newUsuario = Usuarios(id, avatar, nombres, apellidos, username, email, password, role, descripcion, datetime.now())
 		mysql.session.add(newUsuario)
 		mysql.session.commit()
 
@@ -139,18 +144,20 @@ def updateUser(id):
 		username = request.json['username']
 		email = request.json['email']
 		role = request.json['role']
+		descripcion = request.json['descripcion']
 
 		usuario = Usuarios.query.get(id)
 		if usuario:
 			# return usuario_schema.jsonify(usuario)
-			usuario.avatar
+			# usuario.avatar = usuario.avatar
 			usuario.nombres = nombres
 			usuario.apellidos = apellidos
 			usuario.username = username
 			usuario.email = email
-			usuario.password
+			# usuario.password = usuario.password
 			usuario.role = role
-			usuario.fec
+			usuario.descripcion = descripcion
+			# usuario.fecha_creacion = usuario.fecha_creacion
 			mysql.session.commit()
 			return jsonify({'data': usuario_schema.jsonify(usuario), 'message':'Usuario actualizado correctamente'})
 		else:

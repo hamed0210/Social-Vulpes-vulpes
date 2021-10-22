@@ -38,5 +38,5 @@ virtualenv venv
 - _Instalar modulos necesarios para la funcionalidad del backend_
 
 ```
-pip install flask flask-cors pyjwt flask-sqlalchemy pymysql python-dotenv PyJWT flask-marshmallow marshmallow-sqlalchemy
+pip install flask flask-cors flask-sqlalchemy pymysql python-dotenv PyJWT flask-marshmallow marshmallow-sqlalchemy
 ```
