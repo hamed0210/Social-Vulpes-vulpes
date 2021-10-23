@@ -14,27 +14,29 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/social_vulpes_vulpes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# app.config['SECRET_KEY'] = 'z8V42cOhqorMFvnpf5LPQIt3U0Wag9T1'
-
-mysql = SQLAlchemy(app)
+db = SQLAlchemy(app)
 ma = Marshmallow(app)
 CORS(app)
 
-# Rutas
 
-# Inicio de Sesion
 
-class Usuarios(mysql.Model):
-	id = mysql.Column(mysql.Integer, primary_key=True)
-	avatar = mysql.Column(mysql.String(50))
-	nombres = mysql.Column(mysql.String(50))
-	apellidos = mysql.Column(mysql.String(50))
-	username = mysql.Column(mysql.String(50), unique=True)
-	email = mysql.Column(mysql.String(25), unique=True)
-	password = mysql.Column(mysql.String(90))
-	role = mysql.Column(mysql.String())
-	descripcion = mysql.Column(mysql.String(200))
-	fecha_creacion = mysql.Column(mysql.DateTime)
+# Modelos
+
+
+# Usuarios
+
+
+class Usuarios(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	avatar = db.Column(db.String(50))
+	nombres = db.Column(db.String(50))
+	apellidos = db.Column(db.String(50))
+	username = db.Column(db.String(50), unique=True)
+	email = db.Column(db.String(25), unique=True)
+	password = db.Column(db.String(90))
+	role = db.Column(db.String())
+	descripcion = db.Column(db.String(200))
+	fecha_creacion = db.Column(db.DateTime)
 
 	def __init__(self, id, avatar, nombres, apellidos, username, email, password, role, descripcion, fecha_creacion):
 			self.id = id
@@ -48,7 +50,7 @@ class Usuarios(mysql.Model):
 			self.descripcion = descripcion
 			self.fecha_creacion = fecha_creacion
 
-mysql.create_all()
+db.create_all()
 
 class UsuarioSchema(ma.Schema):
     class Meta:
@@ -56,6 +58,99 @@ class UsuarioSchema(ma.Schema):
 
 usuario_schema = UsuarioSchema()
 usuarios_schema = UsuarioSchema(many=True)
+
+
+
+# Publicaciones
+
+
+class Publicaciones(db.Model):
+	codigo = db.Column(db.String(50), primary_key=True)
+	id_usuario = db.Column(db.Integer)
+	descripcion = db.Column(db.String(250))
+	imagen = db.Column(db.String(50))
+	fecha_creacion = db.Column(db.DateTime)
+
+	def __init__(self, codigo, id_usuario, descripcion, imagen, fecha_creacion):
+			self.codigo = codigo
+			self.id_usuario = id_usuario
+			self.descripcion = descripcion
+			self.imagen = imagen
+			self.fecha_creacion = fecha_creacion
+
+db.create_all()
+
+class PublicacionesSchema(ma.Schema):
+    class Meta:
+        fields = ('codigo', 'id_usuario', 'descripcion', 'imagen', 'fecha_creacion')
+
+publicacion_schema = PublicacionesSchema()
+publicaciones_schema = PublicacionesSchema(many=True)
+
+
+
+# Comentarios
+
+
+class Comentarios(db.Model):
+	codigo = db.Column(db.String(50), primary_key=True)
+	id_usuario = db.Column(db.Integer)
+	comentario = db.Column(db.String(250))
+	codigo_publicacion = db.Column(db.String(50))
+	fecha_creacion = db.Column(db.DateTime)
+
+	def __init__(self, codigo, id_usuario, comentario, codigo_publicacion, fecha_creacion):
+			self.codigo = codigo
+			self.id_usuario = id_usuario
+			self.comentario = comentario
+			self.codigo_publicacion = codigo_publicacion
+			self.fecha_creacion = fecha_creacion
+
+db.create_all()
+
+class ComentariosSchema(ma.Schema):
+    class Meta:
+        fields = ('codigo', 'id_usuario', 'comentario', 'codigo_publicacion', 'fecha_creacion')
+
+comentario_schema = ComentariosSchema()
+comentarios_schema = ComentariosSchema(many=True)
+
+
+
+# Mensajes
+
+
+class Mensajes(db.Model):
+	codigo = db.Column(db.String(50), primary_key=True)
+	id_usuario_enviado = db.Column(db.Integer)
+	id_usuario_recivido = db.Column(db.Integer)
+	mensaje = db.Column(db.Text)
+	fecha_creacion = db.Column(db.DateTime)
+
+	def __init__(self, codigo, id_usuario_enviado, id_usuario_recivido, mensaje, fecha_creacion):
+			self.codigo = codigo
+			self.id_usuario_enviado = id_usuario_enviado
+			self.id_usuario_recivido = id_usuario_recivido
+			self.mensaje = mensaje
+			self.fecha_creacion = fecha_creacion
+
+db.create_all()
+
+class MensajesSchema(ma.Schema):
+    class Meta:
+        fields = ('codigo', 'id_usuario_enviado', 'id_usuario_recivido', 'mensaje', 'fecha_creacion')
+
+mensaje_schema = MensajesSchema()
+mensajes_schema = MensajesSchema(many=True)
+
+
+#  Rutas
+
+
+
+#  Inisio de sesion
+
+
 
 @app.route('/signin', methods=['POST'])
 def signIn():
@@ -72,7 +167,12 @@ def signIn():
 			token = write_token(data=usuario.username)
 			return jsonify({'token': str(token)})
 	except:
-		return jsonify({'message':'Ocurrió un error al realizar la operación'})
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+
+# Chequear Token
+
 
 @app.route('/check', methods=['POST'])
 def check():
@@ -82,10 +182,15 @@ def check():
 		token_clear = token.split("'")
 		return valida_token(token_clear[1], output=True)
 	except:
-		return jsonify('Ocurrió un error al realizar la operación'), 400
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
 
 
 # Usuarios 
+
+
+
+# Crear Usuario
 
 @app.route('/users', methods=['POST'])
 def createUser():
@@ -100,33 +205,38 @@ def createUser():
 		role = request.json['role']
 		descripcion = request.json['descripcion']
 
-		print(id, avatar, nombres, apellidos, username, email, password, role, descripcion)
-
 		newUsuario = Usuarios(id, avatar, nombres, apellidos, username, email, password, role, descripcion, datetime.now())
-		mysql.session.add(newUsuario)
-		mysql.session.commit()
+		db.session.add(newUsuario)
+		db.session.commit()
 
 		# print(usuario_schema.jsonify(newUsuario))
 		
-		return jsonify('Usuario creado correctamente')
+		return jsonify({'message':'Usuario creado correctamente'})
 	except IntegrityError:
-		mysql.session.rollback()
-		return jsonify('El usuario ya se encuantra registrado')
+		db.session.rollback()
+		return jsonify({'message':'El usuario ya se encuantra registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener Todos Usuarios
+
 
 @app.route('/users', methods=['GET'])
 def getUsers():
 	try:
 		all_usuarios = Usuarios.query.all()
 		result = usuarios_schema.dump(all_usuarios)
-		print(result)
 		if all_usuarios:
 			return jsonify(result)
 		else:
 			return jsonify({'message': 'No se encontraron usuarios registrados'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación'), 400
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener un Usuario
+
 
 @app.route('/users/<id>', methods=['GET'])
 def getUser(id):
@@ -137,7 +247,11 @@ def getUser(id):
 		else:
 			return jsonify({'message': 'Usuario no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación'), 400
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Actualizar Usuario
+
 
 @app.route('/users/<id>', methods=['PUT'])
 def updateUser(id):
@@ -157,162 +271,320 @@ def updateUser(id):
 			usuario.email = email
 			usuario.role = role
 			usuario.descripcion = descripcion
-			mysql.session.commit()
+			db.session.commit()
 			return jsonify({'message':'Usuario actualizado correctamente'})
 		else: 
 			return jsonify({'message':'Usuario no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación'), 400
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+
+#  Eliminar Usuario
+
+
 
 @app.route('/users/<id>', methods=['DELETE'])
 def deleteUser(id):
 	try:
 		usuario = Usuarios.query.get(id)
-		mysql.session.delete(usuario)
-		mysql.session.commit()
-		return jsonify('Usuario eliminado correctamente')
+		if usuario:
+			db.session.delete(usuario)
+			db.session.commit()
+			return jsonify({'message':'Usuario eliminado correctamente'})
+		else:
+			return jsonify({'message':'Usuario no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
 
 # Publicaciones
+
+
+
+
+# Crear Publicaciones
+
 
 @app.route('/posts', methods=['POST'])
 def createPost():
 	try:
 		codigo = uuid.uuid4()
-		username = request.json['username']
-		imagen = request.json['imagen']
+		id_usuario = request.json['id_usuario']
 		descripcion = request.json['descripcion']
-		return jsonify('Publicacion creada correctamente')
+		imagen = request.json['imagen']
+
+		newPublicacion = Publicaciones(codigo, id_usuario, descripcion, imagen, datetime.now())
+		db.session.add(newPublicacion)
+		db.session.commit()
+		
+		return jsonify({'message':'Publicacion creada correctamente'})
+	except IntegrityError:
+		db.session.rollback()
+		return jsonify({'message':'El usuario ya se encuantra registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener Todas las Publicaciones
+
 
 @app.route('/posts', methods=['GET'])
 def getPosts():
 	try:
-		return 'ss'
+		all_publicaciones = Publicaciones.query.all()
+		result = publicaciones_schema.dump(all_publicaciones)
+		if all_publicaciones:
+			return jsonify(result)
+		else:
+			return jsonify({'message': 'No se encontraron publicaciones registradas'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener una Publicacion
+
 
 @app.route('/posts/<codigo>', methods=['GET'])
 def getPost(codigo):
 	try:
-		return 'ss'
+		publicacion = Publicaciones.query.get(codigo)
+		if publicacion:
+			return publicacion_schema.jsonify(publicacion)
+		else:
+			return jsonify({'message': 'Publicacion no registrada'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Actualizar Publicacion
+
+
 
 @app.route('/posts/<codigo>', methods=['PUT'])
 def updatePost(codigo):
 	try:
-		username = request.json['username']
-		imagen = request.json['imagen']
 		descripcion = request.json['descripcion']
-		
-		return jsonify('Publicacion actualizada correctamente')
+		imagen = request.json['imagen']
+
+		publicacion = Publicaciones.query.get(codigo)
+		if publicacion:
+			publicacion.descripcion = descripcion
+			publicacion.imagen = imagen
+			db.session.commit()
+			return jsonify({'message':'Publicacion actualizada correctamente'})
+		else: 
+			return jsonify({'message':'Publicacion no registrada'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Eliminar Publicacion
+
 
 @app.route('/posts/<codigo>', methods=['DELETE'])
 def deletePost(codigo):
 	try:
-		
-		return jsonify('Publicacion eliminada correctamente')
+		publicacion = Publicaciones.query.get(codigo)
+		if publicacion:
+			db.session.delete(publicacion)
+			db.session.commit()
+			return jsonify({'message':'Publicacion eliminada correctamente'})
+		else:
+			return jsonify({'message':'Publicacion no registrada'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
 
 # Comentarios
+
+
+
+# Crear Comentario
+
 
 @app.route('/comments', methods=['POST'])
 def createComment():
 	try:
 		codigo = uuid.uuid4()
-		username = request.json['username']
+		id_usuario = request.json['id_usuario']
 		comentario = request.json['comentario']
 		codigo_publicacion = request.json['codigo_publicacion']
-		
-		return jsonify('Comentario creado correctamente')
+
+		newComentario = Comentarios(codigo, id_usuario, comentario, codigo_publicacion, datetime.now())
+		db.session.add(newComentario)
+		db.session.commit()
+		return jsonify({'message':'Comentario creado correctamente'})
+	except IntegrityError:
+		db.session.rollback()
+		return jsonify({'message':'El comentario ya se encuantra registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener Todos los Comentarios
+
 
 @app.route('/comments', methods=['GET'])
 def getComments():
 	try:
-		return 'ss'
+		all_comentarios = Comentarios.query.all()
+		result = comentarios_schema.dump(all_comentarios)
+		if all_comentarios:
+			return jsonify(result)
+		else:
+			return jsonify({'message': 'No se encontraron comentarios registrados'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener Comentario
+
 
 @app.route('/comments/<codigo>', methods=['GET'])
 def getComment(codigo):
 	try:
-		return 'ss'
+		comentario = Comentarios.query.get(codigo)
+		if comentario:
+			return comentario_schema.jsonify(comentario)
+		else:
+			return jsonify({'message': 'Comentario no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Editar Comentario
+
 
 @app.route('/comments/<codigo>', methods=['PUT'])
 def updateComment(codigo):
 	try:
-		username = request.json['username']
-		comentario = request.json['comentario']
-		codigo_publicacion = request.json['codigo_publicacion']
-		
-		return jsonify('Comentario actualizado correctamente')
+		comentario_req = request.json['comentario']
+
+		comentario = Comentarios.query.get(codigo)
+		if comentario:
+			comentario.comentario = comentario_req
+			db.session.commit()
+			return jsonify({'message':'Comentario actualizado correctamente'})
+		else: 
+			return jsonify({'message':'Comentario no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Eliminar Comentario
+
 
 @app.route('/comments/<codigo>', methods=['DELETE'])
 def deleteComment(codigo):
 	try:
-		
-		return jsonify('Comentario eliminado correctamente')
+		comentario = Comentarios.query.get(codigo)
+		if comentario:
+			db.session.delete(comentario)
+			db.session.commit()
+			return jsonify({'message':'Comentario eliminado correctamente'})
+		else:
+			return jsonify({'message':'Comentario no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+
 
 # Mensajes
+
+
+
+# Crear Mensaje
+
+
 
 @app.route('/messages', methods=['POST'])
 def createMessage():
 	try:
 		codigo = uuid.uuid4()
-		username_enviado = request.json['username_enviado']
-		username_recivido = request.json['username_recivido']
+		id_usuario_enviado = request.json['id_usuario_enviado']
+		id_usuario_recivido = request.json['id_usuario_recivido']
 		mensaje = request.json['mensaje']
-		
-		return jsonify('Mensaje creado correctamente')
+
+		newComentario = Mensajes(codigo, id_usuario_enviado, id_usuario_recivido, mensaje, datetime.now())
+		db.session.add(newComentario)
+		db.session.commit()
+		return jsonify({'message':'Mensaje creado correctamente'})
+	except IntegrityError:
+		db.session.rollback()
+		return jsonify({'message':'El comentario ya se encuantra registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener todos los Mensajes
+
 
 @app.route('/messages', methods=['GET'])
 def getMessages():
 	try:
-		return 'ss'
+		all_mensajes = Mensajes.query.all()
+		result = mensajes_schema.dump(all_mensajes)
+		if all_mensajes:
+			return jsonify(result)
+		else:
+			return jsonify({'message': 'No se encontraron mensajes registrados'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Obtener Mensaje
+
 
 @app.route('/messages/<codigo>', methods=['GET'])
 def getMessage(codigo):
 	try:
-		return 'ss'
+		mensaje = Mensajes.query.get(codigo)
+		if mensaje:
+			return mensaje_schema.jsonify(mensaje)
+		else:
+			return jsonify({'message': 'Mensaje no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Editar Mensaje
+
 
 @app.route('/messages/<codigo>', methods=['PUT'])
 def updateMessage(codigo):
 	try:
-		username_enviado = request.json['username_enviado']
-		username_recivido = request.json['username_recivido']
-		mensaje = request.json['mensaje']
-		
-		return jsonify('Mensaje actualizado correctamente')
+		mensaje_req = request.json['mensaje']
+
+		mensaje = Mensajes.query.get(codigo)
+		if mensaje:
+			mensaje.mensaje = mensaje_req
+			db.session.commit()
+			return jsonify({'message':'Mensaje actualizado correctamente'})
+		else: 
+			return jsonify({'message':'Mensaje no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+# Eliminar Mensaje
+
 
 @app.route('/messages/<codigo>', methods=['DELETE'])
 def deleteMessage(codigo):
 	try:
-		
-		return jsonify('Mensaje eliminado correctamente')
+		mensaje = Mensajes.query.get(codigo)
+		if mensaje:
+			db.session.delete(mensaje)
+			db.session.commit()
+			return jsonify({'message':'Mensaje eliminado correctamente'})
+		else:
+			return jsonify({'message':'Mensaje no registrado'}), 400
 	except:
-		return jsonify('Ocurrió un error al realizar la operación')
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
 
 
 
