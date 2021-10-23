@@ -299,6 +299,46 @@ def deleteUser(id):
 
 
 
+# Actualizar Contraseña Usuario
+
+
+@app.route('/users/<id>', methods=['PUT'])
+def updateUser(id):
+	try:
+		usuario = Usuarios.query.get(id)
+		if usuario:
+			usuario.password = generate_password_hash(request.json['password'], method='sha256')
+			db.session.commit()
+			return jsonify({'message':'Contraseña actualizada correctamente'})
+		else: 
+			return jsonify({'message':'Usuario no registrado'}), 400
+	except:
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+
+
+# Actualizar Avatar Usuario
+
+
+@app.route('/users/<id>', methods=['PUT'])
+def updateUser(id):
+	avatar = request.json['avatar']
+	try:
+		usuario = Usuarios.query.get(id)
+		if usuario:
+			usuario.avatar = avatar
+			db.session.commit()
+			return jsonify({'message':'Avatar actualizado correctamente'})
+		else: 
+			return jsonify({'message':'Usuario no registrado'}), 400
+	except:
+		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
+
+
+
+
+
 # Publicaciones
 
 
