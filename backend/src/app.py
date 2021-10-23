@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 from flask_marshmallow import Marshmallow
 import uuid
 from flask_cors import CORS
@@ -108,6 +109,9 @@ def createUser():
 		# print(usuario_schema.jsonify(newUsuario))
 		
 		return jsonify('Usuario creado correctamente')
+	except IntegrityError:
+		mysql.session.rollback()
+		return jsonify('El usuario ya se encuantra registrado')
 	except:
 		return jsonify('Ocurrió un error al realizar la operación')
 
@@ -138,7 +142,6 @@ def getUser(id):
 @app.route('/users/<id>', methods=['PUT'])
 def updateUser(id):
 	try:
-		# avatar = request.json['avatar']
 		nombres = request.json['nombres']
 		apellidos = request.json['apellidos']
 		username = request.json['username']
@@ -148,20 +151,16 @@ def updateUser(id):
 
 		usuario = Usuarios.query.get(id)
 		if usuario:
-			# return usuario_schema.jsonify(usuario)
-			# usuario.avatar = usuario.avatar
 			usuario.nombres = nombres
 			usuario.apellidos = apellidos
 			usuario.username = username
 			usuario.email = email
-			# usuario.password = usuario.password
 			usuario.role = role
 			usuario.descripcion = descripcion
-			# usuario.fecha_creacion = usuario.fecha_creacion
 			mysql.session.commit()
-			return jsonify({'data': usuario_schema.jsonify(usuario), 'message':'Usuario actualizado correctamente'})
-		else:
-			return jsonify({'message': 'Usuario no registrado'}), 400
+			return jsonify({'message':'Usuario actualizado correctamente'})
+		else: 
+			return jsonify({'message':'Usuario no registrado'}), 400
 	except:
 		return jsonify('Ocurrió un error al realizar la operación'), 400
 
@@ -171,7 +170,6 @@ def deleteUser(id):
 		usuario = Usuarios.query.get(id)
 		mysql.session.delete(usuario)
 		mysql.session.commit()
-		print(usuario_schema(usuario))
 		return jsonify('Usuario eliminado correctamente')
 	except:
 		return jsonify('Ocurrió un error al realizar la operación')
