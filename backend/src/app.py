@@ -54,7 +54,7 @@ db.create_all()
 
 class UsuarioSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'password', 'role', 'fecha_creacion')
+        fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'password', 'role', 'descripcion', 'fecha_creacion')
 
 usuario_schema = UsuarioSchema()
 usuarios_schema = UsuarioSchema(many=True)
@@ -180,7 +180,24 @@ def check():
 		bearer = request.headers['Authorization'].split(' ')
 		token = bearer[1]
 		token_clear = token.split("'")
-		return valida_token(token_clear[1], output=True)
+		dataToken = valida_token(token_clear[1], output=True)
+		if type(dataToken) is dict:
+			# print(dataToken['username'])
+			usuario = Usuarios.query.filter_by(username=dataToken['username']).first()
+			 
+			# return usuario_schema.jsonify(usuario)
+			return usuario_schema.jsonify({
+    		"id": usuario.id,
+    		"nombres": usuario.nombres,
+				"apellidos": usuario.apellidos,
+    		"username": usuario.username,
+    		"email": usuario.email,
+   			"role": usuario.role,
+   			"descripcion": usuario.descripcion,
+    		"fecha_creacion": usuario.fecha_creacion,
+			})
+		else:
+			return dataToken
 	except:
 		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
 
@@ -302,8 +319,8 @@ def deleteUser(id):
 # Actualizar Contraseña Usuario
 
 
-@app.route('/users/<id>', methods=['PUT'])
-def updateUser(id):
+@app.route('/users/password/<id>', methods=['PUT'])
+def updatePassword(id):
 	try:
 		usuario = Usuarios.query.get(id)
 		if usuario:
@@ -321,8 +338,8 @@ def updateUser(id):
 # Actualizar Avatar Usuario
 
 
-@app.route('/users/<id>', methods=['PUT'])
-def updateUser(id):
+@app.route('/users/avatar/<id>', methods=['PUT'])
+def updateAvatar(id):
 	avatar = request.json['avatar']
 	try:
 		usuario = Usuarios.query.get(id)
