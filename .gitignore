@@ -6,7 +6,10 @@
 /frontend/.pnp.js
 /frontend/README.md
 /frontend/.gitignore
+/frontend/src/.env
 /backend/venv
+/backend/src/__pycache__
+/backend/src/.env
 
 # testing
 /frontend/coverage
