@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { withRouter, Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import Styles from './login.module.css'
@@ -11,24 +11,29 @@ import useButtonLoader from 'hooks/useButtonLoader'
 
 const Login = ({ history }) => {
 	const dispatch = useDispatch()
-	// const loginStore = useSelector((store) => store.login)
-	const [buttonLoad, setLoading] = useButtonLoader('Entrar')
+	const loginStore = useSelector((store) => store.login)
+	const [buttonLoad, setLoading] = useButtonLoader('Entrar', 'Entrando')
 	const [showPassword, setShowPassword] = useState(false)
 	const [datos, setDatos] = useState({
 		username: '',
 		password: '',
 	})
 
-	const handlePassword = (e) => {
-		const icon = e.target
-		const inputPassword = icon.parentNode.previousSibling
+	useEffect(() => {
+		const inputPassword = document.getElementsByName('password').item(0)
 
 		if (showPassword) {
-			setShowPassword(false)
 			inputPassword.type = 'text'
 		} else {
-			setShowPassword(true)
 			inputPassword.type = 'password'
+		}
+	}, [showPassword])
+
+	const handlePassword = (e) => {
+		if (showPassword) {
+			setShowPassword(false)
+		} else {
+			setShowPassword(true)
 		}
 	}
 
@@ -48,6 +53,11 @@ const Login = ({ history }) => {
 		<div className={Styles.container}>
 			<h2 className={Styles.title}>Social Vulpes vulpes</h2>
 			<div className={Styles.login_container}>
+				{loginStore.message && (
+					<div className={`${Styles.error_container}`}>
+						<span className={Styles.error}>{loginStore.message}</span>
+					</div>
+				)}
 				<div className={Styles.login}>
 					<form onSubmit={handleSubmit} className={Styles.form}>
 						<div className={Styles.inputGroup}>
@@ -73,20 +83,20 @@ const Login = ({ history }) => {
 								/>
 								<span onClick={handlePassword} className={Styles.icon}>
 									{showPassword ? (
-										<FontAwesomeIcon icon={faEye} />
-									) : (
 										<FontAwesomeIcon icon={faEyeSlash} />
+									) : (
+										<FontAwesomeIcon icon={faEye} />
 									)}
 								</span>
 							</div>
 						</div>
-						<div className={Styles.recordarme_container}>
+						{/* <div className={Styles.recordarme_container}>
 							<span className={Styles.recordarme_check} />
 							<label className={Styles.recordarme}>
 								<input type='checkbox' name='recordarme' />
 								Recordame
 							</label>
-						</div>
+						</div> */}
 						<button
 							className={`btn btn_success ${Styles.btn}`}
 							type='submit'

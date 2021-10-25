@@ -5,7 +5,6 @@ CREATE DATABASE IF NOT EXISTS social_vulpes_vulpes;
 USE social_vulpes_vulpes;
 
 CREATE TABLE usuarios(
-	id INT(10) UNSIGNED,
 	avatar VARCHAR(50) NOT NULL,
 	nombres VARCHAR(50) NOT NULL,
 	apellidos VARCHAR(50) NOT NULL,

@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from function_jwt import write_token, valida_token
+from marshmallow import fields
 
 app = Flask(__name__)
 
@@ -27,6 +28,8 @@ CORS(app)
 
 
 class Usuarios(db.Model):
+	__tablename__ = 'usuarios'
+
 	id = db.Column(db.Integer, primary_key=True)
 	avatar = db.Column(db.String(50))
 	nombres = db.Column(db.String(50))
@@ -37,6 +40,7 @@ class Usuarios(db.Model):
 	role = db.Column(db.String())
 	descripcion = db.Column(db.String(200))
 	fecha_creacion = db.Column(db.DateTime)
+	# publicaciones = db.relationship("Publicaciones")
 
 	def __init__(self, id, avatar, nombres, apellidos, username, email, password, role, descripcion, fecha_creacion):
 			self.id = id
@@ -66,23 +70,41 @@ usuarios_schema = UsuarioSchema(many=True)
 
 class Publicaciones(db.Model):
 	codigo = db.Column(db.String(50), primary_key=True)
-	id_usuario = db.Column(db.Integer)
+	id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 	descripcion = db.Column(db.String(250))
 	imagen = db.Column(db.String(50))
 	fecha_creacion = db.Column(db.DateTime)
+	usuario = db.relationship("Usuarios", backref=db.backref('publicaciones'), lazy=True)
 
-	def __init__(self, codigo, id_usuario, descripcion, imagen, fecha_creacion):
+	def __init__(self, codigo, id_usuario, descripcion, imagen, fecha_creacion, usuario):
 			self.codigo = codigo
 			self.id_usuario = id_usuario
 			self.descripcion = descripcion
 			self.imagen = imagen
 			self.fecha_creacion = fecha_creacion
+			self.usuario = usuario
 
 db.create_all()
 
 class PublicacionesSchema(ma.Schema):
-    class Meta:
-        fields = ('codigo', 'id_usuario', 'descripcion', 'imagen', 'fecha_creacion')
+			class Meta:
+				# codigo = fields.String(dump_only=True)
+				# id_usuario = fields.Integer()
+				# descripcion = fields.String()
+				# imagen = fields.String()
+				# fecha_creacion = fields.String()
+				fields = ('codigo', 'id_usuario', 'descripcion', 'imagen', 'fecha_creacion', 'usuario')
+				# model = Publicaciones
+				# include_fk = True
+				
+			# usuario = ma.Nested('UsuarioSchema', many=True)
+				# include_fk = True
+
+
+		# links = ma.Hyperlinks({
+    #     'self': ma.URLFor('usuario_detail', values=dict(id='<id>')),
+    #     'collection': ma.URLFor('usuario_list')
+    # })
 
 publicacion_schema = PublicacionesSchema()
 publicaciones_schema = PublicacionesSchema(many=True)
@@ -174,7 +196,7 @@ def signIn():
 # Chequear Token
 
 
-@app.route('/check', methods=['POST'])
+@app.route('/check', methods=['GET'])
 def check():
 	try:
 		bearer = request.headers['Authorization'].split(' ')
@@ -242,7 +264,8 @@ def createUser():
 @app.route('/users', methods=['GET'])
 def getUsers():
 	try:
-		all_usuarios = Usuarios.query.all()
+		# all_usuarios = Usuarios.query.all()
+		all_usuarios = Usuarios.query.join(Publicaciones)
 		result = usuarios_schema.dump(all_usuarios)
 		if all_usuarios:
 			return jsonify(result)
@@ -391,6 +414,7 @@ def createPost():
 def getPosts():
 	try:
 		all_publicaciones = Publicaciones.query.all()
+		print(all_publicaciones[0].usuario.username)
 		result = publicaciones_schema.dump(all_publicaciones)
 		if all_publicaciones:
 			return jsonify(result)

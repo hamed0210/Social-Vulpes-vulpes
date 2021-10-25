@@ -1,60 +1,39 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Switch, Route, withRouter } from 'react-router-dom'
-// import axios from 'axios'
 
 import Styles from 'App.module.css'
 import Header from 'Componentes/Header'
 import Main from 'Componentes/Main'
 import Login from 'Componentes/Login'
 import Registro from 'Componentes/Registro'
+import { checkToken } from 'redux/loginDuck'
 
 function App({ history }) {
+	const dispatch = useDispatch()
 	const userStore = useSelector((store) => store.login)
 	// const [loadingState, setLoadingState] = useState(false)
-	// const { pathname } = history.location
 
 	useEffect(() => {
 		const cargarUsuario = async () => {
-			const user = JSON.parse(localStorage.getItem('user'))
-			if (user) {
-				userStore.user = user
+			const token = localStorage.getItem('token')
+
+			if (token) {
+				dispatch(checkToken(token, userStore, history))
 			} else {
+				// setLoadingState(null)
 				history.push('/login')
 			}
-			// if (user) {
-			// 	try {
-			// 		const result = await axios.get(`hhtp://localhost:5000/signin`, user)
-			// 		userStore.user = result.data
-			// 		if (userStore.user.id) setLoadingState(true)
-			// 	} catch (error) {
-			// 		if (error.request.status === 401) {
-			// 			setLoadingState(null)
-			// 			localStorage.removeItem('user')
-			// 			userStore.message = 'La sesion a caducado, inicia sesion nuevamente'
-			// 			history.push('/login')
-			// 		}
-			// 		// if (error.message === 'Network Error') {
-			// 		// 	setLoadingState(null)
-			// 		// 	userStore.message = 'Error de conexión con el servidor'
-			// 		// 	history.push('/login')
-			// 		// }
-			// 		console.log(error)
-			// 	}
-			// } else {
-			// 	setLoadingState(null)
-			// 	history.push('/login')
-			// }
 		}
 		cargarUsuario()
-	}, [history, userStore])
+	}, [history, userStore, dispatch])
 
 	return (
 		<main className={Styles.conatiner_body}>
 			<Switch>
 				{
 					// loadingState !== false ? (
-					userStore.user.id ? (
+					userStore.user.length !== 0 ? (
 						// pathname !== '/login' ? (
 						<>
 							<Header />

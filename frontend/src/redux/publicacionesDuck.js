@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-import { cerrarSesionAccion } from 'redux/loginDuck'
+// import { cerrarSesionAccion } from 'redux/loginDuck'
 
 const URI = process.env.REACT_APP_URI
 const PORT = process.env.REACT_APP_PORT
@@ -120,197 +120,197 @@ export const obtenerPublicacionesAccion = (history) => async (dispath) => {
 	}
 }
 
-export const nuevaPublicacionAccion =
-	(data, history, setLoading, setResetForm) => async (dispath) => {
-		try {
-			setLoading(true)
+// export const nuevaPublicacionAccion =
+// 	(data, history, setLoading, setResetForm) => async (dispath) => {
+// 		try {
+// 			setLoading(true)
 
-			const result = await axios.post(`${URI}${PORT}/posts`, data)
-			dispath({
-				type: NUEVO_PUBLICACION_EXITO,
-				payload: {
-					message: result.data.message,
-				},
-			})
+// 			const result = await axios.post(`${URI}${PORT}/posts`, data)
+// 			dispath({
+// 				type: NUEVO_PUBLICACION_EXITO,
+// 				payload: {
+// 					message: result.data.message,
+// 				},
+// 			})
 
-			setLoading(false)
-			setResetForm(true)
+// 			setLoading(false)
+// 			setResetForm(true)
 
-			// setTimeout(() => {
-			// 	dispath({
-			// 		type: NUEVO_PUBLICACION_EXITO,
-			// 		payload: {
-			// 			message: '',
-			// 		},
-			// 	})
-			// }, 5000)
-		} catch (error) {
-			if (error.request.status === 401) {
-				removeLocalStorage()
-				const message = 'La sesion a caducado, inicia sesion nuevamente'
-				dispath(cerrarSesionAccion(history, message))
-				return history.push('/login')
-			}
-			if (error.message === 'Network Error') {
-				dispath({
-					type: NUEVO_PUBLICACION_ERROR,
-					payload: {
-						message: 'Error de conexión con el servidor',
-					},
-				})
-			} else
-				dispath({
-					type: NUEVO_PUBLICACION_ERROR,
-					payload: {
-						message: JSON.parse(error.request.response).message,
-					},
-				})
-			setLoading(false)
-			setResetForm(false)
+// 			// setTimeout(() => {
+// 			// 	dispath({
+// 			// 		type: NUEVO_PUBLICACION_EXITO,
+// 			// 		payload: {
+// 			// 			message: '',
+// 			// 		},
+// 			// 	})
+// 			// }, 5000)
+// 		} catch (error) {
+// 			if (error.request.status === 401) {
+// 				// removeLocalStorage()
+// 				const message = 'La sesion a caducado, inicia sesion nuevamente'
+// 				// dispath(cerrarSesionAccion(history, message))
+// 				return history.push('/login')
+// 			}
+// 			if (error.message === 'Network Error') {
+// 				dispath({
+// 					type: NUEVO_PUBLICACION_ERROR,
+// 					payload: {
+// 						message: 'Error de conexión con el servidor',
+// 					},
+// 				})
+// 			} else
+// 				dispath({
+// 					type: NUEVO_PUBLICACION_ERROR,
+// 					payload: {
+// 						message: JSON.parse(error.request.response).message,
+// 					},
+// 				})
+// 			setLoading(false)
+// 			setResetForm(false)
 
-			// setTimeout(() => {
-			// 	dispath({
-			// 		type: NUEVO_PUBLICACION_ERROR,
-			// 		payload: {
-			// 			message: '',
-			// 		},
-			// 	})
-			// }, 5000)
-			console.log(error.request)
-		}
-	}
+// 			// setTimeout(() => {
+// 			// 	dispath({
+// 			// 		type: NUEVO_PUBLICACION_ERROR,
+// 			// 		payload: {
+// 			// 			message: '',
+// 			// 		},
+// 			// 	})
+// 			// }, 5000)
+// 			console.log(error.request)
+// 		}
+// 	}
 
-export const editarPublicacionAccion =
-	(data, history, setLoading, handleVerEditarCerrar) =>
-	async (dispath, getState) => {
-		const token = getLocalStorage()
-		try {
-			setLoading(true)
+// export const editarPublicacionAccion =
+// 	(data, history, setLoading, handleVerEditarCerrar) =>
+// 	async (dispath, getState) => {
+// 		// const token = getLocalStorage()
+// 		try {
+// 			setLoading(true)
 
-			const result = await axios.put(`${URI}${PORT}/posts/${data.codigo}`, data)
+// 			const result = await axios.put(`${URI}${PORT}/posts/${data.codigo}`, data)
 
-			// const productoEditado = getState().productos.array.map((el) => {
-			// 	return el.codigo === result.data.data.codigo
-			// 		? (el = result.data.data)
-			// 		: el
-			// })
+// 			// const productoEditado = getState().productos.array.map((el) => {
+// 			// 	return el.codigo === result.data.data.codigo
+// 			// 		? (el = result.data.data)
+// 			// 		: el
+// 			// })
 
-			dispath({
-				type: ELIMINAR_PUBLICACION_EXITO,
-				payload: {
-					array: productoEditado,
-					message: result.data.message,
-				},
-			})
+// 			dispath({
+// 				type: ELIMINAR_PUBLICACION_EXITO,
+// 				payload: {
+// 					// array: productoEditado,
+// 					message: result.data.message,
+// 				},
+// 			})
 
-			setLoading(false)
-			handleVerEditarCerrar()
+// 			setLoading(false)
+// 			handleVerEditarCerrar()
 
-			// setTimeout(() => {
-			// 	dispath({
-			// 		type: ELIMINAR_PUBLICACION_MESSAGE_EXITO,
-			// 		payload: {
-			// 			message: '',
-			// 		},
-			// 	})
-			// }, 5000)
-		} catch (error) {
-			if (error.request.status === 401) {
-				removeLocalStorage()
-				const message = 'La sesion a caducado, inicia sesion nuevamente'
-				dispath(cerrarSesionAccion(history, message))
-				return history.push('/login')
-			}
-			if (error.message === 'Network Error') {
-				dispath({
-					type: ELIMINAR_PUBLICACION_ERROR,
-					payload: {
-						message: 'Error de conexión con el servidor',
-					},
-				})
-			} else
-				dispath({
-					type: ELIMINAR_PUBLICACION_ERROR,
-					payload: {
-						message: JSON.parse(error.request.response).message,
-					},
-				})
+// 			// setTimeout(() => {
+// 			// 	dispath({
+// 			// 		type: ELIMINAR_PUBLICACION_MESSAGE_EXITO,
+// 			// 		payload: {
+// 			// 			message: '',
+// 			// 		},
+// 			// 	})
+// 			// }, 5000)
+// 		} catch (error) {
+// 			if (error.request.status === 401) {
+// 				// removeLocalStorage()
+// 				const message = 'La sesion a caducado, inicia sesion nuevamente'
+// 				// dispath(cerrarSesionAccion(history, message))
+// 				return history.push('/login')
+// 			}
+// 			if (error.message === 'Network Error') {
+// 				dispath({
+// 					type: ELIMINAR_PUBLICACION_ERROR,
+// 					payload: {
+// 						message: 'Error de conexión con el servidor',
+// 					},
+// 				})
+// 			} else
+// 				dispath({
+// 					type: ELIMINAR_PUBLICACION_ERROR,
+// 					payload: {
+// 						message: JSON.parse(error.request.response).message,
+// 					},
+// 				})
 
-			setLoading(false)
-			handleVerEditarCerrar()
+// 			setLoading(false)
+// 			handleVerEditarCerrar()
 
-			// setTimeout(() => {
-			// 	dispath({
-			// 		type: ELIMINAR_PUBLICACION_ERROR,
-			// 		payload: {
-			// 			message: '',
-			// 		},
-			// 	})
-			// }, 5000)
-			console.log(error.request)
-		}
-	}
+// 			// setTimeout(() => {
+// 			// 	dispath({
+// 			// 		type: ELIMINAR_PUBLICACION_ERROR,
+// 			// 		payload: {
+// 			// 			message: '',
+// 			// 		},
+// 			// 	})
+// 			// }, 5000)
+// 			console.log(error.request)
+// 		}
+// 	}
 
-export const eliminarPublicacionAccion =
-	(data, history, setLoading, setVerEliminar) => async (dispath) => {
-		const token = getLocalStorage()
-		try {
-			setLoading(true)
+// export const eliminarPublicacionAccion =
+// 	(data, history, setLoading, setVerEliminar) => async (dispath) => {
+// 		// const token = getLocalStorage()
+// 		try {
+// 			setLoading(true)
 
-			const result = await axios.delete(`${URI}${PORT}/posts/${data.item}`)
+// 			const result = await axios.delete(`${URI}${PORT}/posts/${data.item}`)
 
-			dispath({
-				type: ELIMINAR_PUBLICACION_EXITO,
-				payload: {
-					array: data.data,
-					message: result.data.message,
-				},
-			})
+// 			dispath({
+// 				type: ELIMINAR_PUBLICACION_EXITO,
+// 				payload: {
+// 					array: data.data,
+// 					message: result.data.message,
+// 				},
+// 			})
 
-			setLoading(false)
-			setVerEliminar(false)
+// 			setLoading(false)
+// 			setVerEliminar(false)
 
-			// setTimeout(() => {
-			// 	dispath({
-			// 		type: ELIMINAR_PUBLICACION_MESSAGE_EXITO,
-			// 		payload: {
-			// 			message: '',
-			// 		},
-			// 	})
-			// }, 5000)
-		} catch (error) {
-			if (error.request.status === 401) {
-				removeLocalStorage()
-				const message = 'La sesion a caducado, inicia sesion nuevamente'
-				dispath(cerrarSesionAccion(history, message))
-				return history.push('/login')
-			}
-			if (error.message === 'Network Error') {
-				dispath({
-					type: ELIMINAR_PUBLICACION_ERROR,
-					payload: {
-						message: 'Error de conexión con el servidor',
-					},
-				})
-			} else
-				dispath({
-					type: ELIMINAR_PUBLICACION_ERROR,
-					payload: {
-						message: JSON.parse(error.request.response).message,
-					},
-				})
+// 			// setTimeout(() => {
+// 			// 	dispath({
+// 			// 		type: ELIMINAR_PUBLICACION_MESSAGE_EXITO,
+// 			// 		payload: {
+// 			// 			message: '',
+// 			// 		},
+// 			// 	})
+// 			// }, 5000)
+// 		} catch (error) {
+// 			if (error.request.status === 401) {
+// 				// removeLocalStorage()
+// 				const message = 'La sesion a caducado, inicia sesion nuevamente'
+// 				// dispath(cerrarSesionAccion(history, message))
+// 				return history.push('/login')
+// 			}
+// 			if (error.message === 'Network Error') {
+// 				dispath({
+// 					type: ELIMINAR_PUBLICACION_ERROR,
+// 					payload: {
+// 						message: 'Error de conexión con el servidor',
+// 					},
+// 				})
+// 			} else
+// 				dispath({
+// 					type: ELIMINAR_PUBLICACION_ERROR,
+// 					payload: {
+// 						message: JSON.parse(error.request.response).message,
+// 					},
+// 				})
 
-			setLoading(false)
-			setVerEliminar(false)
+// 			setLoading(false)
+// 			setVerEliminar(false)
 
-			// setTimeout(() => {
-			// 	dispath({
-			// 		type: ELIMINAR_PUBLICACION_ERROR,
-			// 		payload: {
-			// 			message: '',
-			// 		},
-			// 	})
-			// }, 5000)
-			console.log(error.request)
-		}
-	}
+// 			// setTimeout(() => {
+// 			// 	dispath({
+// 			// 		type: ELIMINAR_PUBLICACION_ERROR,
+// 			// 		payload: {
+// 			// 			message: '',
+// 			// 		},
+// 			// 	})
+// 			// }, 5000)
+// 			console.log(error.request)
+// 		}
+// 	}
