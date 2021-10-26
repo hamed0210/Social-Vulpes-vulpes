@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from function_jwt import write_token, valida_token
-from marshmallow import fields
 
 app = Flask(__name__)
 
@@ -40,7 +39,7 @@ class Usuarios(db.Model):
 	role = db.Column(db.String())
 	descripcion = db.Column(db.String(200))
 	fecha_creacion = db.Column(db.DateTime)
-	# publicaciones = db.relationship("Publicaciones")
+	posts = db.relationship("Publicaciones", backref=db.backref('publicaciones'), lazy=True, viewonly=True)
 
 	def __init__(self, id, avatar, nombres, apellidos, username, email, password, role, descripcion, fecha_creacion):
 			self.id = id
@@ -58,10 +57,17 @@ db.create_all()
 
 class UsuarioSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'password', 'role', 'descripcion', 'fecha_creacion')
+        fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'role', 'descripcion', 'fecha_creacion')
 
 usuario_schema = UsuarioSchema()
 usuarios_schema = UsuarioSchema(many=True)
+
+# class UsuarioSchema(ma.Schema):
+#     class Meta:
+#         fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'role', 'descripcion', 'fecha_creacion', 'posts')
+
+# usuario_schema = UsuarioSchema()
+# usuarios_schema = UsuarioSchema(many=True)
 
 
 
@@ -69,42 +75,28 @@ usuarios_schema = UsuarioSchema(many=True)
 
 
 class Publicaciones(db.Model):
+	__tablename__ = 'publicaciones'
+
 	codigo = db.Column(db.String(50), primary_key=True)
 	id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id'))
 	descripcion = db.Column(db.String(250))
 	imagen = db.Column(db.String(50))
 	fecha_creacion = db.Column(db.DateTime)
 	usuario = db.relationship("Usuarios", backref=db.backref('publicaciones'), lazy=True)
+	comentarios = db.relationship("Comentarios", backref=db.backref('comentarios'), lazy=True)
 
-	def __init__(self, codigo, id_usuario, descripcion, imagen, fecha_creacion, usuario):
+	def __init__(self, codigo, id_usuario, descripcion, imagen, fecha_creacion):
 			self.codigo = codigo
 			self.id_usuario = id_usuario
 			self.descripcion = descripcion
 			self.imagen = imagen
 			self.fecha_creacion = fecha_creacion
-			self.usuario = usuario
 
 db.create_all()
 
 class PublicacionesSchema(ma.Schema):
 			class Meta:
-				# codigo = fields.String(dump_only=True)
-				# id_usuario = fields.Integer()
-				# descripcion = fields.String()
-				# imagen = fields.String()
-				# fecha_creacion = fields.String()
-				fields = ('codigo', 'id_usuario', 'descripcion', 'imagen', 'fecha_creacion', 'usuario')
-				# model = Publicaciones
-				# include_fk = True
-				
-			# usuario = ma.Nested('UsuarioSchema', many=True)
-				# include_fk = True
-
-
-		# links = ma.Hyperlinks({
-    #     'self': ma.URLFor('usuario_detail', values=dict(id='<id>')),
-    #     'collection': ma.URLFor('usuario_list')
-    # })
+				fields = ('codigo', 'descripcion', 'imagen', 'fecha_creacion', 'usuario', 'comentarios')
 
 publicacion_schema = PublicacionesSchema()
 publicaciones_schema = PublicacionesSchema(many=True)
@@ -115,10 +107,12 @@ publicaciones_schema = PublicacionesSchema(many=True)
 
 
 class Comentarios(db.Model):
+	__tablename__ = 'comentarios'
+
 	codigo = db.Column(db.String(50), primary_key=True)
-	id_usuario = db.Column(db.Integer)
+	id_usuario = db.Column(db.Integer , db.ForeignKey('usuarios.id'))
 	comentario = db.Column(db.String(250))
-	codigo_publicacion = db.Column(db.String(50))
+	codigo_publicacion = db.Column(db.String(50) , db.ForeignKey('publicaciones.codigo'))
 	fecha_creacion = db.Column(db.DateTime)
 
 	def __init__(self, codigo, id_usuario, comentario, codigo_publicacion, fecha_creacion):
@@ -185,7 +179,6 @@ def signIn():
 		if not usuario or not check_password_hash(usuario.password, password):
 			return jsonify({'message': 'Datos ingresados son incorrectos'}), 400
 		else:
-			# data = usuario_schema.jsonify(usuario)
 			token = write_token(data=usuario.username)
 			return jsonify({'token': str(token)})
 	except:
@@ -202,22 +195,12 @@ def check():
 		bearer = request.headers['Authorization'].split(' ')
 		token = bearer[1]
 		token_clear = token.split("'")
+		print(token_clear)
 		dataToken = valida_token(token_clear[1], output=True)
 		if type(dataToken) is dict:
-			# print(dataToken['username'])
 			usuario = Usuarios.query.filter_by(username=dataToken['username']).first()
 			 
-			# return usuario_schema.jsonify(usuario)
-			return usuario_schema.jsonify({
-    		"id": usuario.id,
-    		"nombres": usuario.nombres,
-				"apellidos": usuario.apellidos,
-    		"username": usuario.username,
-    		"email": usuario.email,
-   			"role": usuario.role,
-   			"descripcion": usuario.descripcion,
-    		"fecha_creacion": usuario.fecha_creacion,
-			})
+			return usuario_schema.jsonify(usuario)
 		else:
 			return dataToken
 	except:
@@ -230,6 +213,8 @@ def check():
 
 
 # Crear Usuario
+
+
 
 @app.route('/users', methods=['POST'])
 def createUser():
@@ -247,8 +232,6 @@ def createUser():
 		newUsuario = Usuarios(id, avatar, nombres, apellidos, username, email, password, role, descripcion, datetime.now())
 		db.session.add(newUsuario)
 		db.session.commit()
-
-		# print(usuario_schema.jsonify(newUsuario))
 		
 		return jsonify({'message':'Usuario creado correctamente'})
 	except IntegrityError:
@@ -264,8 +247,7 @@ def createUser():
 @app.route('/users', methods=['GET'])
 def getUsers():
 	try:
-		# all_usuarios = Usuarios.query.all()
-		all_usuarios = Usuarios.query.join(Publicaciones)
+		all_usuarios = Usuarios.query.all()
 		result = usuarios_schema.dump(all_usuarios)
 		if all_usuarios:
 			return jsonify(result)
@@ -413,11 +395,23 @@ def createPost():
 @app.route('/posts', methods=['GET'])
 def getPosts():
 	try:
-		all_publicaciones = Publicaciones.query.all()
-		print(all_publicaciones[0].usuario.username)
-		result = publicaciones_schema.dump(all_publicaciones)
+		all_publicaciones = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).all()
+		
+		result = []
+		result_no_repeat = []
+		for publicacion in all_publicaciones:
+			show_publicacion = publicacion_schema.dump(publicacion[0])
+			show_publicacion['usuario'] = usuario_schema.dump(publicacion[0].usuario)
+			if show_publicacion['comentarios']:
+				show_publicacion['comentarios'] = comentarios_schema.dump(publicacion[0].comentarios)
+			result.append(show_publicacion)
+
+		for i in result:
+			if i not in result_no_repeat:
+				result_no_repeat.append(i)
+
 		if all_publicaciones:
-			return jsonify(result)
+			return jsonify(result_no_repeat)
 		else:
 			return jsonify({'message': 'No se encontraron publicaciones registradas'}), 400
 	except:
@@ -500,7 +494,7 @@ def createComment():
 		return jsonify({'message':'Comentario creado correctamente'})
 	except IntegrityError:
 		db.session.rollback()
-		return jsonify({'message':'El comentario ya se encuantra registrado'}), 400
+		return jsonify({'message':'El comentario no se pudo registrar'}), 400
 	except:
 		return jsonify({'message':'Ocurrió un error al realizar la operación'}), 400
 
