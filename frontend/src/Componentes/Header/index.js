@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCommentAlt } from '@fortawesome/free-regular-svg-icons'
@@ -12,15 +12,16 @@ import Styles from './header.module.css'
 
 function Header({ history }) {
 	const dispatch = useDispatch()
+	const usuarioStore = useSelector((store) => store.login.user)
 	const [profile, setProfile] = useState(false)
 
 	const handleMenuProfile = () => {
 		profile ? setProfile(false) : setProfile(true)
 	}
 
-	const handleProfile = () => {
-		history.push('/perfil')
-	}
+	// const handleProfile = () => {
+	// 	history.push('/perfil')
+	// }
 
 	const handleCerrarSesion = () => {
 		dispatch(cerrarSesionAccion(history))
@@ -51,7 +52,7 @@ function Header({ history }) {
 						{/* <span className={Styles.name}></span> */}
 						<span className={Styles.separator}></span>
 						<div className={Styles.avatar}>
-							<img src={'./avatar.jpg'} alt='' />
+							<img src={usuarioStore.avatar} alt='' />
 						</div>
 						<div
 							onClick={handleMenuProfile}
@@ -63,8 +64,11 @@ function Header({ history }) {
 							{profile ? (
 								<div className={Styles.profile_container}>
 									<ul className={Styles.profile_menu}>
-										<li onClick={handleProfile} className={Styles.profile_item}>
-											<Link className={Styles.profile_link} to='/perfil'>
+										<li className={Styles.profile_item}>
+											<Link
+												className={Styles.profile_link}
+												to={`/perfil/${usuarioStore.username}`}
+											>
 												<FontAwesomeIcon
 													className={Styles.profile_item_icon}
 													icon={faUser}

@@ -6,6 +6,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import Styles from './post.module.css'
 
 const Post = ({ publicaciones }) => {
+	const [showMenuOpcionesPost, setShowMenuOpcionesPost] = useState(false)
 	const [showPublicar, setShowPublicar] = useState(false)
 
 	const handleInputChange = (e) => {
@@ -13,31 +14,48 @@ const Post = ({ publicaciones }) => {
 		value.length === 0 ? setShowPublicar(false) : setShowPublicar(true)
 	}
 
+	const handleShowMenuOption = () => {
+		showMenuOpcionesPost
+			? setShowMenuOpcionesPost(false)
+			: setShowMenuOpcionesPost(true)
+	}
+
 	return publicaciones.map((el, value) => {
-		console.log(el)
+		// console.log(el)
 		return (
 			<div className={Styles.container} key={value}>
 				<div className={Styles.header}>
 					<div className={Styles.user_container}>
-						<Link className={Styles.avatar} to={'/perfil'}>
-							{/* <img src={'./avatar.jpg'} alt='' /> */}
+						<Link className={Styles.avatar} to={`/perfil/${el.username}`}>
+							<img src={el.usuario.avatar} alt='' />
 						</Link>
-						<Link className={Styles.username} to={'/perfil'}>
-							{el.username}
+						<Link className={Styles.username} to={`/perfil/${el.username}`}>
+							{el.usuario.username}
 						</Link>
 					</div>
-					<span className={Styles.opciones}>
-						<FontAwesomeIcon icon={faEllipsisV} />
-					</span>
+					<div className={Styles.opciones}>
+						<FontAwesomeIcon
+							icon={faEllipsisV}
+							onClick={handleShowMenuOption}
+						/>
+						{showMenuOpcionesPost ? (
+							<div className={Styles.opciones_menu_container}>
+								<ul className={Styles.opciones_menu}>
+									<li className={Styles.opciones_menu_item}>Editar</li>
+									<li className={Styles.opciones_menu_item}>Eliminar</li>
+								</ul>
+							</div>
+						) : null}
+					</div>
 				</div>
 				<div className={Styles.imagen_container}>
-					<img src={'./post.jpg'} alt='' />
+					<img src={el.imagen} alt='' />
 				</div>
-				<span className={Styles.descripcion}>#Arte</span>
+				<span className={Styles.descripcion}>{el.descripcion}</span>
 				<div className={Styles.comentarios_container}>
 					<div className={Styles.comentario_container}>
 						<div className={Styles.comentario_avatar}>
-							<img src={'./avatar.jpg'} alt='' />
+							<img src={el.usuario.avatar} alt='' />
 						</div>
 						<span className={Styles.comentario_input_container}>
 							<input

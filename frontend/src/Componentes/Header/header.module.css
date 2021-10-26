@@ -202,25 +202,26 @@
 	align-items: center;
 	min-width: max-content;
 	margin: 0;
-	padding: 0 1.25rem;
-	border-radius: 0.313rem;
 	color: var(--color-primary);
-	cursor: pointer;
-	transition: box-shadow 0.3s ease;
+	/* cursor: pointer; */
 }
 
 .profile_item:not(:nth-last-child(1)) {
 	margin-bottom: 2.5px;
 }
 
-.profile_item:hover,
-.notificacion_item:hover {
-	box-shadow: 0px 0.063rem 0.125rem #00000040, 0 -0.063rem 0.125rem #00000040;
-}
-
 .profile_link {
+	width: 100%;
+	padding: 0 1.25rem;
+	border-radius: 0.313rem;
 	text-decoration: none;
 	color: var(--color-primary);
+	transition: box-shadow 0.3s ease;
+}
+
+.profile_link:hover,
+.notificacion_item:hover {
+	box-shadow: 0px 0.063rem 0.125rem #00000040, 0 -0.063rem 0.125rem #00000040;
 }
 
 .profile_item_icon {

@@ -15,9 +15,7 @@ const Main = () => {
 			<Route exact path='/mensajes'>
 				<Mensajes />
 			</Route>
-			<Route exact path='/perfil'>
-				<Perfil />
-			</Route>
+			<Route exact path='/perfil/:username' component={Perfil} />
 			<Route exact path='/chat'>
 				<Chat />
 			</Route>

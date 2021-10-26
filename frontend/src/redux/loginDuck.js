@@ -86,33 +86,34 @@ export const iniciarSesionAccion =
 		}
 	}
 
-export const checkToken = (token, userStore, history) => async (dispath) => {
-	try {
-		const result = await axios.get(
-			`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/check`,
-			{
-				headers: {
-					authorization: `Bearer ${token}`,
-				},
+export const checkToken =
+	(token, userStore, history, setLoadingState) => async (dispath) => {
+		try {
+			const result = await axios.get(
+				`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/check`,
+				{
+					headers: {
+						authorization: `Bearer ${token}`,
+					},
+				}
+			)
+			if (result) userStore.user = result.data
+			if (userStore.user.id) setLoadingState(true)
+		} catch (error) {
+			if (error.request.status === 401) {
+				// setLoadingState(null)
+				localStorage.removeItem('token')
+				userStore.message = 'La sesion a caducado, inicia sesion nuevamente'
+				history.push('/login')
 			}
-		)
-		if (result) userStore.user = result.data
-		// if (userStore.user.id) setLoadingState(true)
-	} catch (error) {
-		if (error.request.status === 401) {
-			// setLoadingState(null)
-			localStorage.removeItem('token')
-			userStore.message = 'La sesion a caducado, inicia sesion nuevamente'
-			history.push('/login')
+			if (error.message === 'Network Error') {
+				// setLoadingState(null)
+				userStore.message = 'Error de conexión con el servidor'
+				history.push('/login')
+			}
+			console.log(error)
 		}
-		if (error.message === 'Network Error') {
-			// setLoadingState(null)
-			userStore.message = 'Error de conexión con el servidor'
-			history.push('/login')
-		}
-		console.log(error)
 	}
-}
 
 export const cerrarSesionAccion =
 	(history, message = '') =>

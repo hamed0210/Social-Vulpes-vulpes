@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch, Route, withRouter } from 'react-router-dom'
 
@@ -12,16 +12,16 @@ import { checkToken } from 'redux/loginDuck'
 function App({ history }) {
 	const dispatch = useDispatch()
 	const userStore = useSelector((store) => store.login)
-	// const [loadingState, setLoadingState] = useState(false)
+	const [loadingState, setLoadingState] = useState(false)
 
 	useEffect(() => {
 		const cargarUsuario = async () => {
 			const token = localStorage.getItem('token')
 
 			if (token) {
-				dispatch(checkToken(token, userStore, history))
+				dispatch(checkToken(token, userStore, history, setLoadingState))
 			} else {
-				// setLoadingState(null)
+				setLoadingState(null)
 				history.push('/login')
 			}
 		}
@@ -31,8 +31,7 @@ function App({ history }) {
 	return (
 		<main className={Styles.conatiner_body}>
 			<Switch>
-				{
-					// loadingState !== false ? (
+				{loadingState !== false ? (
 					userStore.user.length !== 0 ? (
 						// pathname !== '/login' ? (
 						<>
@@ -49,11 +48,9 @@ function App({ history }) {
 							</Route>
 						</>
 					)
-					// )
-					// : (
-					// 	<h1>Loader</h1>
-					// )
-				}
+				) : (
+					<h1>Loader</h1>
+				)}
 			</Switch>
 		</main>
 	)
