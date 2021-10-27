@@ -57,7 +57,7 @@ db.create_all()
 
 class UsuarioSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'role', 'descripcion', 'fecha_creacion')
+        fields = ('id', 'nombres', 'apellidos', 'username', 'avatar', 'email', 'role', 'descripcion', 'fecha_creacion')
 
 usuario_schema = UsuarioSchema()
 usuarios_schema = UsuarioSchema(many=True)
