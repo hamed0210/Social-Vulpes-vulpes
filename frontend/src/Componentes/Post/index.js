@@ -26,10 +26,16 @@ const Post = ({ publicaciones }) => {
 			<div className={Styles.container} key={value}>
 				<div className={Styles.header}>
 					<div className={Styles.user_container}>
-						<Link className={Styles.avatar} to={`/perfil/${el.username}`}>
+						<Link
+							className={Styles.avatar}
+							to={`/perfil/${el.usuario.username}`}
+						>
 							<img src={el.usuario.avatar} alt='' />
 						</Link>
-						<Link className={Styles.username} to={`/perfil/${el.username}`}>
+						<Link
+							className={Styles.username}
+							to={`/perfil/${el.usuario.username}`}
+						>
 							{el.usuario.username}
 						</Link>
 					</div>

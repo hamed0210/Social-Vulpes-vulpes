@@ -34,7 +34,7 @@
 	position: fixed;
 	right: 18%;
 	bottom: 50px;
-	transform: translateX(-18%);
+	/* transform: translateX(-18%); */
 }
 
 .addPost_container {

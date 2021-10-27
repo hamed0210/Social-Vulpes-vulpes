@@ -195,7 +195,6 @@ def check():
 		bearer = request.headers['Authorization'].split(' ')
 		token = bearer[1]
 		token_clear = token.split("'")
-		print(token_clear)
 		dataToken = valida_token(token_clear[1], output=True)
 		if type(dataToken) is dict:
 			usuario = Usuarios.query.filter_by(username=dataToken['username']).first()
@@ -374,12 +373,14 @@ def createPost():
 	try:
 		codigo = uuid.uuid4()
 		id_usuario = request.json['id_usuario']
-		descripcion = request.json['descripcion']
-		imagen = request.json['imagen']
+		# descripcion = request.json['descripcion']
+		# imagen = request.json['imagen']
 
-		newPublicacion = Publicaciones(codigo, id_usuario, descripcion, imagen, datetime.now())
-		db.session.add(newPublicacion)
-		db.session.commit()
+		print(request.files)
+
+		# newPublicacion = Publicaciones(codigo, id_usuario, descripcion, imagen, datetime.now())
+		# db.session.add(newPublicacion)
+		# db.session.commit()
 		
 		return jsonify({'message':'Publicacion creada correctamente'})
 	except IntegrityError:

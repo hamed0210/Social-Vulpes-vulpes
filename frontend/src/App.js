@@ -21,7 +21,7 @@ function App({ history }) {
 			if (token) {
 				dispatch(checkToken(token, userStore, history, setLoadingState))
 			} else {
-				setLoadingState(null)
+				setLoadingState(true)
 				history.push('/login')
 			}
 		}

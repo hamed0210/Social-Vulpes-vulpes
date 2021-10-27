@@ -120,65 +120,69 @@ export const obtenerPublicacionesAccion = (history) => async (dispath) => {
 	}
 }
 
-// export const nuevaPublicacionAccion =
-// 	(data, history, setLoading, setResetForm) => async (dispath) => {
-// 		try {
-// 			setLoading(true)
+export const nuevaPublicacionAccion =
+	(data, history, setLoading, setResetForm) => async (dispath) => {
+		try {
+			setLoading(true)
 
-// 			const result = await axios.post(`${URI}${PORT}/posts`, data)
-// 			dispath({
-// 				type: NUEVO_PUBLICACION_EXITO,
-// 				payload: {
-// 					message: result.data.message,
-// 				},
-// 			})
+			const result = await axios.post(`${URI}${PORT}/posts`, data, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			})
+			// dispath({
+			// 	type: NUEVO_PUBLICACION_EXITO,
+			// 	payload: {
+			// 		message: result.data.message,
+			// 	},
+			// })
 
-// 			setLoading(false)
-// 			setResetForm(true)
+			setLoading(false)
+			// setResetForm(true)
 
-// 			// setTimeout(() => {
-// 			// 	dispath({
-// 			// 		type: NUEVO_PUBLICACION_EXITO,
-// 			// 		payload: {
-// 			// 			message: '',
-// 			// 		},
-// 			// 	})
-// 			// }, 5000)
-// 		} catch (error) {
-// 			if (error.request.status === 401) {
-// 				// removeLocalStorage()
-// 				const message = 'La sesion a caducado, inicia sesion nuevamente'
-// 				// dispath(cerrarSesionAccion(history, message))
-// 				return history.push('/login')
-// 			}
-// 			if (error.message === 'Network Error') {
-// 				dispath({
-// 					type: NUEVO_PUBLICACION_ERROR,
-// 					payload: {
-// 						message: 'Error de conexión con el servidor',
-// 					},
-// 				})
-// 			} else
-// 				dispath({
-// 					type: NUEVO_PUBLICACION_ERROR,
-// 					payload: {
-// 						message: JSON.parse(error.request.response).message,
-// 					},
-// 				})
-// 			setLoading(false)
-// 			setResetForm(false)
+			// setTimeout(() => {
+			// 	dispath({
+			// 		type: NUEVO_PUBLICACION_EXITO,
+			// 		payload: {
+			// 			message: '',
+			// 		},
+			// 	})
+			// }, 5000)
+		} catch (error) {
+			// if (error.request.status === 401) {
+			// 	// removeLocalStorage()
+			// 	const message = 'La sesion a caducado, inicia sesion nuevamente'
+			// 	// dispath(cerrarSesionAccion(history, message))
+			// 	return history.push('/login')
+			// }
+			if (error.message === 'Network Error') {
+				dispath({
+					type: NUEVO_PUBLICACION_ERROR,
+					payload: {
+						message: 'Error de conexión con el servidor',
+					},
+				})
+			} else
+				dispath({
+					type: NUEVO_PUBLICACION_ERROR,
+					payload: {
+						message: JSON.parse(error.request.response).message,
+					},
+				})
+			setLoading(false)
+			// setResetForm(false)
 
-// 			// setTimeout(() => {
-// 			// 	dispath({
-// 			// 		type: NUEVO_PUBLICACION_ERROR,
-// 			// 		payload: {
-// 			// 			message: '',
-// 			// 		},
-// 			// 	})
-// 			// }, 5000)
-// 			console.log(error.request)
-// 		}
-// 	}
+			// setTimeout(() => {
+			// 	dispath({
+			// 		type: NUEVO_PUBLICACION_ERROR,
+			// 		payload: {
+			// 			message: '',
+			// 		},
+			// 	})
+			// }, 5000)
+			console.log(error.request)
+		}
+	}
 
 // export const editarPublicacionAccion =
 // 	(data, history, setLoading, handleVerEditarCerrar) =>

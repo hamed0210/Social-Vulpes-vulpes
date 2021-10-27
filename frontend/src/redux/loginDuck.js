@@ -101,13 +101,13 @@ export const checkToken =
 			if (userStore.user.id) setLoadingState(true)
 		} catch (error) {
 			if (error.request.status === 401) {
-				// setLoadingState(null)
+				setLoadingState(true)
 				localStorage.removeItem('token')
 				userStore.message = 'La sesion a caducado, inicia sesion nuevamente'
 				history.push('/login')
 			}
 			if (error.message === 'Network Error') {
-				// setLoadingState(null)
+				setLoadingState(true)
 				userStore.message = 'Error de conexión con el servidor'
 				history.push('/login')
 			}

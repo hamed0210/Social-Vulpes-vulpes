@@ -8,19 +8,26 @@ import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 
 import Styles from './home.module.css'
 import Post from 'Componentes/Post'
-import { obtenerPublicacionesAccion } from 'redux/publicacionesDuck'
+import {
+	obtenerPublicacionesAccion,
+	nuevaPublicacionAccion,
+} from 'redux/publicacionesDuck'
+import useButtonLoader from 'hooks/useButtonLoader'
 
 const Home = ({ history }) => {
 	const dispatch = useDispatch()
 	const usuario = useSelector((store) => store.login.user)
 	const publicaciones = useSelector((store) => store.publicaciones.array)
 	// const publicacionesMessage = useSelector((store) => store.publicaciones.message)
+	const [buttonLoad, setLoading] = useButtonLoader('Publicar', 'Publicando')
 	const [showNewPost, setShowNewPost] = useState(false)
 	const [datos, setDatos] = useState({
 		descripcion: '',
 		imagen: '',
 		id_usuario: usuario.id,
 	})
+
+	console.log(datos)
 
 	useEffect(() => {
 		dispatch(obtenerPublicacionesAccion(history))
@@ -37,9 +44,17 @@ const Home = ({ history }) => {
 		})
 	}
 
+	const handleInputFileChange = (e) => {
+		if (e.target.files.length > 0)
+			setDatos({
+				...datos,
+				[e.target.name]: e.target.files[0],
+			})
+	}
+
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		// dispatch(iniciarSesionAccion(datos, history, setLoading))
+		dispatch(nuevaPublicacionAccion(datos, history, setLoading))
 	}
 
 	return (
@@ -103,7 +118,7 @@ const Home = ({ history }) => {
 								: datos.imagen} */}
 							</span>
 							<input
-								onChange={handleInputChange}
+								onChange={handleInputFileChange}
 								className={Styles.input_file}
 								type='file'
 								name='imagen'
@@ -119,6 +134,7 @@ const Home = ({ history }) => {
 					<button
 						className={`btn btn_success ${Styles.btn_post}`}
 						type='submit'
+						ref={buttonLoad}
 					>
 						Publicar
 					</button>
