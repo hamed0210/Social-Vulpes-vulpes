@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisV, faEllipsisH } from '@fortawesome/free-solid-svg-icons'
 
 import Styles from './post.module.css'
 
 const Post = ({ publicaciones }) => {
 	const [showMenuOpcionesPost, setShowMenuOpcionesPost] = useState(false)
 	const [showPublicar, setShowPublicar] = useState(false)
+	const comentarios = []
 
 	const handleInputChange = (e) => {
 		const value = e.target.value
@@ -66,31 +67,49 @@ const Post = ({ publicaciones }) => {
 					</div>
 					<span className={Styles.descripcion}>{el.descripcion}</span>
 					<div className={Styles.comentarios_container}>
-						<div className={Styles.comentario_container}>
-							<div className={Styles.comentario_avatar}>
-								<img
-									src={`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/imagen/${el.usuario.avatar}`}
-									alt=''
-								/>
-							</div>
-							<span className={Styles.comentario_input_container}>
-								<input
-									onChange={handleInputChange}
-									className={Styles.comentario_input}
-									type='text'
-									placeholder='Escribir comentario'
-								/>
-							</span>
-							<button
-								className={
-									showPublicar
-										? `${Styles.comentario_btnPublicar} ${Styles.comentario_btnPublicarShow}`
-										: `${Styles.comentario_btnPublicar}`
-								}
-							>
-								Publicar
-							</button>
+						{el.comentarios !== 0 &&
+							el.comentarios.map((element) => {
+								return (
+									<div className={Styles.comentario_post_container}>
+										<div className={Styles.comentario_post}>
+											<span className={Styles.comentario_username}>
+												{element.usuario.username}
+											</span>
+											<span className={Styles.comentario_comentario}>
+												{element.comentario}
+											</span>
+										</div>
+										<span className={Styles.comentario_post_opciones}>
+											<FontAwesomeIcon icon={faEllipsisH} />
+										</span>
+									</div>
+								)
+							})}
+					</div>
+					<div className={Styles.new_comentario_container}>
+						<div className={Styles.new_comentario_avatar}>
+							<img
+								src={`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/imagen/${el.usuario.avatar}`}
+								alt=''
+							/>
 						</div>
+						<span className={Styles.new_comentario_input_container}>
+							<input
+								onChange={handleInputChange}
+								className={Styles.new_comentario_input}
+								type='text'
+								placeholder='Escribir comentario'
+							/>
+						</span>
+						<button
+							className={
+								showPublicar
+									? `${Styles.new_comentario_btnPublicar} ${Styles.new_comentario_btnPublicarShow}`
+									: `${Styles.new_comentario_btnPublicar}`
+							}
+						>
+							Publicar
+						</button>
 					</div>
 				</div>
 			)

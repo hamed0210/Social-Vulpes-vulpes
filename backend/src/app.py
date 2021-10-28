@@ -13,7 +13,7 @@ from function_jwt import write_token, valida_token
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/social_vulpes_vulpes'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:910210vaquero@localhost/social_vulpes_vulpes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['IMAGENES_SRC'] = 'src/imagenes'
@@ -119,6 +119,7 @@ class Comentarios(db.Model):
 	comentario = db.Column(db.String(250))
 	codigo_publicacion = db.Column(db.String(50) , db.ForeignKey('publicaciones.codigo'))
 	fecha_creacion = db.Column(db.DateTime)
+	usuario = db.relationship("Usuarios", backref=db.backref('usuario'), lazy=True)
 
 	def __init__(self, codigo, id_usuario, comentario, codigo_publicacion, fecha_creacion):
 			self.codigo = codigo
@@ -131,7 +132,7 @@ db.create_all()
 
 class ComentariosSchema(ma.Schema):
     class Meta:
-        fields = ('codigo', 'id_usuario', 'comentario', 'codigo_publicacion', 'fecha_creacion')
+        fields = ('codigo', 'id_usuario', 'comentario', 'codigo_publicacion', 'fecha_creacion', 'usuario')
 
 comentario_schema = ComentariosSchema()
 comentarios_schema = ComentariosSchema(many=True)
@@ -420,7 +421,6 @@ def getImagen(filename):
 def getPosts():
 	try:
 		all_publicaciones = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).all()
-
 		
 		result = []
 		result_no_repeat = []
@@ -429,6 +429,8 @@ def getPosts():
 			show_publicacion['usuario'] = usuario_schema.dump(publicacion[0].usuario)
 			if show_publicacion['comentarios']:
 				show_publicacion['comentarios'] = comentarios_schema.dump(publicacion[0].comentarios)
+				for usu in show_publicacion['comentarios']:
+					usu['usuario'] = usuario_schema.dump(usu['usuario'])
 			result.append(show_publicacion)
 
 		for i in result:
@@ -450,14 +452,14 @@ def getPosts():
 def getPost(codigo):
 	try:
 		result = []
-		# publicacion = Publicaciones.query.get(codigo)
 		publicacion = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).filter(Publicaciones.codigo == codigo).first()
 
 		show_publicacion = publicacion_schema.dump(publicacion[0])
 		show_publicacion['usuario'] = usuario_schema.dump(publicacion[0].usuario)
-		# print(show_publicacion['imagen'])
 		if show_publicacion['comentarios']:
 			show_publicacion['comentarios'] = comentarios_schema.dump(publicacion[0].comentarios)
+			for usu in show_publicacion['comentarios']:
+					usu['usuario'] = usuario_schema.dump(usu['usuario'])
 		result.append(show_publicacion)
 
 		if publicacion:
