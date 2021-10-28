@@ -41,6 +41,7 @@
 }
 
 .searcher_container {
+	position: relative;
 	display: flex;
 	margin-right: 15px;
 }
@@ -54,6 +55,61 @@
 	font-family: 'Antonio', sans-serif;
 	background-color: var(--background-secundary);
 	/* outline: none; */
+}
+
+.usuarios_searcher_container {
+	position: absolute;
+	top: 50px;
+	left: 0;
+	width: 200px;
+	padding: 5px 10px;
+	border-radius: 5px;
+	box-shadow: 0.063rem 0.063rem 0.125rem rgba(0, 0, 0, 0.25),
+		-0.063rem -0.063rem 0.125rem rgba(0, 0, 0, 0.25);
+}
+
+.usuario_searcher_container {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.usuario_searcher_container:not(:nth-last-child(1)) {
+	margin-bottom: 5px;
+}
+
+.usuario_searcher_container:not(:nth-last-child(1))::after {
+	position: absolute;
+	content: '';
+	bottom: -2.5px;
+	left: 50%;
+	width: 95%;
+	height: 1px;
+	background-color: var(--color-label);
+	opacity: 0.2;
+	transform: translateX(-50%);
+}
+
+.usuario_searcher_avatar {
+	width: 30px;
+	height: 30px;
+	padding: 0.125rem;
+	border: 0.125rem solid var(--color-primary);
+	border-radius: 50%;
+	margin-right: 10px;
+	overflow: hidden;
+}
+
+.usuario_searcher_avatar img {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+.usuario_searcher_username {
+	font-size: 13px;
 }
 
 .mensajes_container {

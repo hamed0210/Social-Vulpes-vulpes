@@ -8,7 +8,6 @@ import Styles from './post.module.css'
 const Post = ({ publicaciones }) => {
 	const [showMenuOpcionesPost, setShowMenuOpcionesPost] = useState(false)
 	const [showPublicar, setShowPublicar] = useState(false)
-	const comentarios = []
 
 	const handleInputChange = (e) => {
 		const value = e.target.value
@@ -70,7 +69,10 @@ const Post = ({ publicaciones }) => {
 						{el.comentarios !== 0 &&
 							el.comentarios.map((element) => {
 								return (
-									<div className={Styles.comentario_post_container}>
+									<div
+										className={Styles.comentario_post_container}
+										key={element.codigo}
+									>
 										<div className={Styles.comentario_post}>
 											<span className={Styles.comentario_username}>
 												{element.usuario.username}

@@ -67,12 +67,12 @@ class UsuarioSchema(ma.Schema):
 usuario_schema = UsuarioSchema()
 usuarios_schema = UsuarioSchema(many=True)
 
-# class UsuarioSchema(ma.Schema):
-#     class Meta:
-#         fields = ('id', 'nombres', 'apellidos', 'username', 'email', 'role', 'descripcion', 'fecha_creacion', 'posts')
+class UsuarioPerfilSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'nombres', 'apellidos', 'username', 'avatar', 'email', 'role', 'descripcion', 'fecha_creacion', 'posts')
 
-# usuario_schema = UsuarioSchema()
-# usuarios_schema = UsuarioSchema(many=True)
+usuario_perfil_schema = UsuarioPerfilSchema()
+usuarios_perfil_schema = UsuarioPerfilSchema(many=True)
 
 
 
@@ -105,6 +105,13 @@ class PublicacionesSchema(ma.Schema):
 
 publicacion_schema = PublicacionesSchema()
 publicaciones_schema = PublicacionesSchema(many=True)
+
+# class PublicacionesUsuarioSchema(ma.Schema):
+# 			class Meta:
+# 				fields = ('codigo', 'descripcion', 'imagen', 'fecha_creacion')
+
+# publicacion_usuario_schema = PublicacionesUsuarioSchema()
+# publicaciones_usuario_schema = PublicacionesUsuarioSchema(many=True)
 
 
 
@@ -261,7 +268,16 @@ def createUser():
 def getUsers():
 	try:
 		all_usuarios = Usuarios.query.all()
-		result = usuarios_schema.dump(all_usuarios)
+		result = usuarios_perfil_schema.dump(all_usuarios)
+
+		for usuario in result:
+			usuario['posts'] = publicaciones_schema.dump(usuario['posts'])
+			for post in usuario['posts']:
+				post['usuario'] = usuario_schema.dump(post['usuario'])	
+				post['comentarios'] = comentarios_schema.dump(post['comentarios'])
+				for comentario in post['comentarios']:
+					comentario['usuario'] = usuario_schema.dump(post['usuario'])
+			
 		if all_usuarios:
 			return jsonify(result)
 		else:

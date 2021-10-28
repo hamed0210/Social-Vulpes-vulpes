@@ -18,7 +18,6 @@ const Home = ({ history }) => {
 	const dispatch = useDispatch()
 	const usuario = useSelector((store) => store.login.user)
 	const publicaciones = useSelector((store) => store.publicaciones.array)
-	// const publicacionesMessage = useSelector((store) => store.publicaciones.message)
 	const [buttonLoad, setLoading] = useButtonLoader('Publicar', 'Publicando')
 	const [resetForm, setResetForm] = useState(false)
 	const [showNewPost, setShowNewPost] = useState(false)
@@ -27,16 +26,13 @@ const Home = ({ history }) => {
 
 	useEffect(() => {
 		dispatch(obtenerPublicacionesAccion(history))
-	}, [dispatch, history])
-
-	useEffect(() => {
 		if (resetForm) {
 			document.querySelector(`.${Styles.newPost_form}`).reset()
 			setFileData('')
 			setShowNewPost(false)
 			setResetForm(false)
 		}
-	}, [resetForm])
+	}, [dispatch, history, resetForm])
 
 	const handleShowNewPost = () => {
 		showNewPost ? setShowNewPost(false) : setShowNewPost(true)

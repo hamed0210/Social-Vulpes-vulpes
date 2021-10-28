@@ -15,27 +15,26 @@ function Header({ history }) {
 	const dispatch = useDispatch()
 	const usuarioStore = useSelector((store) => store.login.user)
 	const usuariosStore = useSelector((store) => store.usuarios.array)
-	const [usuarioBuscado, setusuarioBuscado] = useState([])
+	const [datoBuscado, setDatoBuscado] = useState([])
 	const [profile, setProfile] = useState(false)
+	const [showSearch, setShowSearch] = useState(false)
 
 	useEffect(() => {
 		dispatch(obtenerUsuariosAccion())
 	}, [dispatch])
 
-	console.log(usuarioBuscado)
-
 	const handleInputChange = (e) => {
 		const value = e.target.value
-		usuariosStore.map((el) => {
+		const usuarioBuscado = []
+		usuariosStore.forEach((el) => {
 			if (el.username.includes(value) && value !== '') {
-				// console.log(el.username)
-				setusuarioBuscado(el)
-				return null
+				usuarioBuscado.push(el)
+				setShowSearch(true)
 			} else {
-				// usuarioBuscado.filter()
+				setShowSearch(false)
 			}
 		})
-		// value.length === 0 ? setShowPublicar(false) : setShowPublicar(true)
+		setDatoBuscado(usuarioBuscado)
 	}
 
 	const handleMenuProfile = () => {
@@ -62,6 +61,29 @@ function Header({ history }) {
 							type='text'
 							placeholder='Buscar'
 						/>
+						{showSearch ? (
+							<div className={Styles.usuarios_searcher_container}>
+								{datoBuscado.length !== 0 &&
+									datoBuscado.map((el) => {
+										return (
+											<div
+												className={Styles.usuario_searcher_container}
+												key={el.id}
+											>
+												<span className={Styles.usuario_searcher_avatar}>
+													<img
+														src={`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/imagen/${el.avatar}`}
+														alt=''
+													/>
+												</span>
+												<span className={Styles.usuario_searcher_username}>
+													{el.username}
+												</span>
+											</div>
+										)
+									})}
+							</div>
+						) : null}
 					</div>
 					<div className={Styles.mensajes_container}>
 						<Link className={Styles.mensajes_link} to='/mensajes'>
