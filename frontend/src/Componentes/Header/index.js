@@ -29,6 +29,7 @@ function Header({ history }) {
 		usuariosStore.forEach((el) => {
 			if (el.username.includes(value) && value !== '') {
 				usuarioBuscado.push(el)
+				profile && setProfile(false)
 				setShowSearch(true)
 			} else {
 				setShowSearch(false)
