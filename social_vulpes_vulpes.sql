@@ -24,7 +24,7 @@ CREATE TABLE publicaciones(
 	codigo VARCHAR(50),
 	id_usuario INT(10) UNSIGNED NOT NULL,
 	descripcion VARCHAR(250) NOT NULL,
-	imagen VARCHAR(50) NOT NULL,
+	imagen VARCHAR(60) NOT NULL,
 	fecha_creacion DATETIME DEFAULT current_timestamp,
  	PRIMARY KEY (codigo)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

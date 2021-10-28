@@ -11,7 +11,10 @@ const Perfil = ({ match }) => {
 			<div className={Styles.info_usuario_container}>
 				<div className={Styles.avatar_container}>
 					<div className={Styles.avatar}>
-						<img src={'./avatar.jpg'} alt='' />
+						<img
+							src={`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/imagen/${userStore.avatar}`}
+							alt=''
+						/>
 					</div>
 				</div>
 				<div className={Styles.info_usuario}>

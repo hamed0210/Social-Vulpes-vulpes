@@ -1,8 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, send_file
+from flask.helpers import send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from flask_marshmallow import Marshmallow
 import uuid
+import os
 from flask_cors import CORS
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,6 +15,9 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/social_vulpes_vulpes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.config['IMAGENES_SRC'] = 'src/imagenes'
+app.config['IMAGENES'] = 'imagenes'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -218,19 +223,27 @@ def check():
 @app.route('/users', methods=['POST'])
 def createUser():
 	try:
-		id = request.json['id']
-		avatar = request.json['avatar']
-		nombres = request.json['nombres']
-		apellidos = request.json['apellidos']
-		username = request.json['username']
-		email = request.json['email']
-		password = generate_password_hash(request.json['password'], method='sha256')
-		role = request.json['role']
-		descripcion = request.json['descripcion']
 
-		newUsuario = Usuarios(id, avatar, nombres, apellidos, username, email, password, role, descripcion, datetime.now())
+		id = request.form.get('id')
+		nombres = request.form.get('nombres')
+		apellidos = request.form.get('apellidos')
+		username = request.form.get('username')
+		email = request.form.get('email')
+		password = generate_password_hash(request.form.get('password'), method='sha256')
+		role = request.form.get('role')
+		descripcion = request.form.get('descripcion')
+		avatar = request.files['avatar']
+
+		# print()
+
+		newFilename = str(username) + '.' + list(reversed(avatar.filename.split('.')))[0]
+
+		newUsuario = Usuarios(id, newFilename, nombres, apellidos, username, email, password, role, descripcion, datetime.now())
 		db.session.add(newUsuario)
 		db.session.commit()
+
+		os.makedirs(app.config['IMAGENES_SRC'], exist_ok=True)
+		avatar.save(os.path.join(app.config['IMAGENES_SRC'], newFilename))
 		
 		return jsonify({'message':'Usuario creado correctamente'})
 	except IntegrityError:
@@ -372,17 +385,24 @@ def updateAvatar(id):
 def createPost():
 	try:
 		codigo = uuid.uuid4()
-		id_usuario = request.json['id_usuario']
-		# descripcion = request.json['descripcion']
-		# imagen = request.json['imagen']
 
-		print(request.files)
+		id_usuario = request.form.get('id_usuario')
+		descripcion = request.form.get('descripcion')
+		imagen = request.files['imagen']
 
-		# newPublicacion = Publicaciones(codigo, id_usuario, descripcion, imagen, datetime.now())
-		# db.session.add(newPublicacion)
-		# db.session.commit()
+		newFilename = str(id_usuario) + '_' + str(codigo) + '.' + list(reversed(imagen.filename.split('.')))[0]
+
+		newPublicacion = Publicaciones(codigo, id_usuario, descripcion, newFilename, datetime.now())
+		db.session.add(newPublicacion)
+		db.session.commit()
+
+		os.makedirs(app.config['IMAGENES_SRC'], exist_ok=True)
+		imagen.save(os.path.join(app.config['IMAGENES_SRC'], newFilename))
+
 		
 		return jsonify({'message':'Publicacion creada correctamente'})
+	except FileNotFoundError:
+		return jsonify({'message':'Folder no existe'}), 400
 	except IntegrityError:
 		db.session.rollback()
 		return jsonify({'message':'El usuario ya se encuantra registrado'}), 400
@@ -392,11 +412,15 @@ def createPost():
 
 # Obtener Todas las Publicaciones
 
+@app.route('/imagen/<filename>', methods=['GET'])
+def getImagen(filename):
+	return send_from_directory(app.config['IMAGENES'], filename, as_attachment=False)
 
 @app.route('/posts', methods=['GET'])
 def getPosts():
 	try:
 		all_publicaciones = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).all()
+
 		
 		result = []
 		result_no_repeat = []
@@ -425,9 +449,19 @@ def getPosts():
 @app.route('/posts/<codigo>', methods=['GET'])
 def getPost(codigo):
 	try:
-		publicacion = Publicaciones.query.get(codigo)
+		result = []
+		# publicacion = Publicaciones.query.get(codigo)
+		publicacion = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).filter(Publicaciones.codigo == codigo).first()
+
+		show_publicacion = publicacion_schema.dump(publicacion[0])
+		show_publicacion['usuario'] = usuario_schema.dump(publicacion[0].usuario)
+		# print(show_publicacion['imagen'])
+		if show_publicacion['comentarios']:
+			show_publicacion['comentarios'] = comentarios_schema.dump(publicacion[0].comentarios)
+		result.append(show_publicacion)
+
 		if publicacion:
-			return publicacion_schema.jsonify(publicacion)
+			return jsonify(result)
 		else:
 			return jsonify({'message': 'Publicacion no registrada'}), 400
 	except:

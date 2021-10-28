@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,20 +8,39 @@ import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 
 import { cerrarSesionAccion } from 'redux/loginDuck'
+import { obtenerUsuariosAccion } from 'redux/usuariosDuck'
 import Styles from './header.module.css'
 
 function Header({ history }) {
 	const dispatch = useDispatch()
 	const usuarioStore = useSelector((store) => store.login.user)
+	const usuariosStore = useSelector((store) => store.usuarios.array)
+	const [usuarioBuscado, setusuarioBuscado] = useState([])
 	const [profile, setProfile] = useState(false)
+
+	useEffect(() => {
+		dispatch(obtenerUsuariosAccion())
+	}, [dispatch])
+
+	console.log(usuarioBuscado)
+
+	const handleInputChange = (e) => {
+		const value = e.target.value
+		usuariosStore.map((el) => {
+			if (el.username.includes(value) && value !== '') {
+				// console.log(el.username)
+				setusuarioBuscado(el)
+				return null
+			} else {
+				// usuarioBuscado.filter()
+			}
+		})
+		// value.length === 0 ? setShowPublicar(false) : setShowPublicar(true)
+	}
 
 	const handleMenuProfile = () => {
 		profile ? setProfile(false) : setProfile(true)
 	}
-
-	// const handleProfile = () => {
-	// 	history.push('/perfil')
-	// }
 
 	const handleCerrarSesion = () => {
 		dispatch(cerrarSesionAccion(history))
@@ -38,6 +57,7 @@ function Header({ history }) {
 				<div className={Styles.secundary}>
 					<div className={Styles.searcher_container}>
 						<input
+							onChange={handleInputChange}
 							className={Styles.searcher_input}
 							type='text'
 							placeholder='Buscar'
@@ -52,7 +72,10 @@ function Header({ history }) {
 						{/* <span className={Styles.name}></span> */}
 						<span className={Styles.separator}></span>
 						<div className={Styles.avatar}>
-							<img src={usuarioStore.avatar} alt='' />
+							<img
+								src={`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/imagen/${usuarioStore.avatar}`}
+								alt=''
+							/>
 						</div>
 						<div
 							onClick={handleMenuProfile}

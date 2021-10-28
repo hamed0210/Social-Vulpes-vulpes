@@ -20,41 +20,44 @@ const Home = ({ history }) => {
 	const publicaciones = useSelector((store) => store.publicaciones.array)
 	// const publicacionesMessage = useSelector((store) => store.publicaciones.message)
 	const [buttonLoad, setLoading] = useButtonLoader('Publicar', 'Publicando')
+	const [resetForm, setResetForm] = useState(false)
 	const [showNewPost, setShowNewPost] = useState(false)
-	const [datos, setDatos] = useState({
-		descripcion: '',
-		imagen: '',
-		id_usuario: usuario.id,
-	})
-
-	console.log(datos)
+	const [descripcionData, setDescripcionData] = useState('')
+	const [fileData, setFileData] = useState('')
 
 	useEffect(() => {
 		dispatch(obtenerPublicacionesAccion(history))
 	}, [dispatch, history])
+
+	useEffect(() => {
+		if (resetForm) {
+			document.querySelector(`.${Styles.newPost_form}`).reset()
+			setFileData('')
+			setShowNewPost(false)
+			setResetForm(false)
+		}
+	}, [resetForm])
 
 	const handleShowNewPost = () => {
 		showNewPost ? setShowNewPost(false) : setShowNewPost(true)
 	}
 
 	const handleInputChange = (e) => {
-		setDatos({
-			...datos,
-			[e.target.name]: e.target.value,
-		})
+		setDescripcionData(e.target.value)
 	}
 
 	const handleInputFileChange = (e) => {
-		if (e.target.files.length > 0)
-			setDatos({
-				...datos,
-				[e.target.name]: e.target.files[0],
-			})
+		if (e.target.files.length > 0) setFileData(e.target.files[0])
 	}
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		dispatch(nuevaPublicacionAccion(datos, history, setLoading))
+		const datos = new FormData()
+		datos.append('descripcion', descripcionData)
+		datos.append('id_usuario', usuario.id)
+		datos.append('imagen', fileData)
+		setResetForm(true)
+		dispatch(nuevaPublicacionAccion(datos, history, setLoading, setResetForm))
 	}
 
 	return (
@@ -113,9 +116,10 @@ const Home = ({ history }) => {
 						</label>
 						<div className={Styles.file_container}>
 							<span className={Styles.file_name}>
-								{/* {datos.imagen && datos.imagen.length >= 17
-								? `${datos.imagen.substr(0, 17)}...`
-								: datos.imagen} */}
+								{/* {console.log(fileData)} */}
+								{fileData && fileData.name && fileData.name.length >= 17
+									? `${fileData.name.substr(0, 17)}...`
+									: fileData.name}
 							</span>
 							<input
 								onChange={handleInputFileChange}

@@ -125,20 +125,16 @@ export const nuevaPublicacionAccion =
 		try {
 			setLoading(true)
 
-			const result = await axios.post(`${URI}${PORT}/posts`, data, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
+			const result = await axios.post(`${URI}${PORT}/posts`, data)
+			dispath({
+				type: NUEVO_PUBLICACION_EXITO,
+				payload: {
+					message: result.data.message,
 				},
 			})
-			// dispath({
-			// 	type: NUEVO_PUBLICACION_EXITO,
-			// 	payload: {
-			// 		message: result.data.message,
-			// 	},
-			// })
 
 			setLoading(false)
-			// setResetForm(true)
+			setResetForm(true)
 
 			// setTimeout(() => {
 			// 	dispath({
@@ -170,7 +166,7 @@ export const nuevaPublicacionAccion =
 					},
 				})
 			setLoading(false)
-			// setResetForm(false)
+			setResetForm(false)
 
 			// setTimeout(() => {
 			// 	dispath({
