@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCameraRetro } from '@fortawesome/free-solid-svg-icons'
 
 import Styles from './perfil.module.css'
 
@@ -37,21 +39,27 @@ const Perfil = ({ match }) => {
 					</span>
 				</div>
 			</div>
-			<div className={Styles.posts}>
-				{datos &&
-					datos.posts.map((el) => {
+			{datos && datos.posts.length !== 0 ? (
+				<div className={Styles.posts}>
+					{datos.posts.map((el) => {
 						return (
 							<div className={Styles.post} key={el.codigo}>
 								<img
-									src={`${process.env.REACT_APP_URI}${
-										process.env.REACT_APP_PORT
-									}/imagen/${datos && datos.avatar}`}
+									src={`${process.env.REACT_APP_URI}${process.env.REACT_APP_PORT}/imagen/${el.imagen}`}
 									alt=''
 								/>
 							</div>
 						)
 					})}
-			</div>
+				</div>
+			) : (
+				<div className={Styles.noPost_container}>
+					<span className={Styles.noPost_icon}>
+						<FontAwesomeIcon icon={faCameraRetro} />
+					</span>
+					<h1 className={Styles.noPost_text}>No hay publicaciones creadas</h1>
+				</div>
+			)}
 		</div>
 	)
 }

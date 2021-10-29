@@ -7,6 +7,7 @@ import Header from 'Componentes/Header'
 import Main from 'Componentes/Main'
 import Login from 'Componentes/Login'
 import Registro from 'Componentes/Registro'
+import Preloader from 'Componentes/Preloader'
 import { checkToken } from 'redux/loginDuck'
 
 function App({ history }) {
@@ -49,7 +50,7 @@ function App({ history }) {
 						</>
 					)
 				) : (
-					<h1>Loader</h1>
+					<Preloader />
 				)}
 			</Switch>
 		</main>

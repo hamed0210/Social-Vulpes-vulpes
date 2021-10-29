@@ -1,4 +1,5 @@
 .container {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -68,20 +69,41 @@
 	/* opacity: 0.8; */
 }
 
+.opciones_editar_btn,
+.opciones_eliminar_btn,
+.comentario_eliminar_btn {
+	border: none;
+	background-color: transparent;
+}
+
+.opciones_editar_btn:disabled,
+.opciones_eliminar_btn:disabled,
+.comentario_eliminar_btn:disabled {
+	pointer-events: none;
+}
+
+.opciones_editar_btn {
+	margin-right: 20px;
+}
+
 .opciones svg {
 	width: 100%;
 	font-size: 15px;
-	cursor: pointer;
+}
+
+.opciones svg path {
+	fill: var(--color-primary);
 }
 
 .opciones_menu_container {
 	position: absolute;
-	top: 30px;
-	right: -80px;
+	/* top: 30px;
+	right: -80px; */
 	border-radius: 2.5px;
 	box-shadow: 0px 0.125rem 0.25rem #00000040,
 		-0.063rem -0.063rem 0.25rem #00000040;
 	background-color: var(--background-primary);
+	z-index: 1;
 }
 
 .opciones_menu {
@@ -175,6 +197,18 @@
 	color: var(--color-label);
 }
 
+.comentario_eliminar_btn {
+	opacity: 0.4;
+}
+
+.comentario_eliminar_btn:hover {
+	opacity: 1;
+}
+
+.comentario_eliminar_btn svg {
+	font-size: 12px;
+}
+
 .new_comentario_container {
 	display: flex;
 	align-items: center;
@@ -208,8 +242,43 @@
 	color: var(--color-primary);
 	background-color: var(--background-color-primary);
 	opacity: 0.5;
+	pointer-events: none;
 }
 
 .new_comentario_btnPublicarShow {
+	pointer-events: all;
 	opacity: 1;
+}
+
+.eliminar_container {
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	top: 80px;
+	left: 50%;
+	padding: 20px 30px;
+	border-radius: 5px;
+	background-color: var(--background-primary);
+	box-shadow: 0.063rem 0.063rem 0.125rem rgba(0, 0, 0, 0.25),
+		-0.063rem -0.063rem 0.125rem rgba(0, 0, 0, 0.25);
+	transform: translateX(-50%);
+	z-index: 1;
+}
+
+.eliminar_message {
+	font-size: 15px;
+	font-family: 'Antonio', sans-serif;
+	margin-bottom: 10px;
+}
+
+.eliminar_btn {
+	margin-right: 10px;
+}
+
+.eliminar_btn,
+.cancelar_btn {
+	font-size: 15px;
+	font-weight: normal;
+	font-family: 'Antonio', sans-serif;
 }

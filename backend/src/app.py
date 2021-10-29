@@ -436,7 +436,7 @@ def getImagen(filename):
 @app.route('/posts', methods=['GET'])
 def getPosts():
 	try:
-		all_publicaciones = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).all()
+		all_publicaciones = db.session.query(Publicaciones, Comentarios).outerjoin(Comentarios, Publicaciones.codigo == Comentarios.codigo_publicacion).order_by(Publicaciones.fecha_creacion.desc()).all()
 		
 		result = []
 		result_no_repeat = []

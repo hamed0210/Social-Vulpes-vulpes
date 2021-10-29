@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCameraRetro } from '@fortawesome/free-solid-svg-icons'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import {
+	faCameraRetro,
+	faPlus,
+	faSpinner,
+} from '@fortawesome/free-solid-svg-icons'
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
 
 import Styles from './home.module.css'
@@ -19,13 +22,21 @@ const Home = ({ history }) => {
 	const usuario = useSelector((store) => store.login.user)
 	const publicaciones = useSelector((store) => store.publicaciones.array)
 	const [buttonLoad, setLoading] = useButtonLoader('Publicar', 'Publicando')
+	const [loadingState, setLoadingState] = useState(false)
+	const [loadingStateNewPost, setLoadingStateNewPost] = useState(false)
 	const [resetForm, setResetForm] = useState(false)
 	const [showNewPost, setShowNewPost] = useState(false)
 	const [descripcionData, setDescripcionData] = useState('')
 	const [fileData, setFileData] = useState('')
 
 	useEffect(() => {
-		dispatch(obtenerPublicacionesAccion(history))
+		dispatch(
+			obtenerPublicacionesAccion(
+				history,
+				setLoadingState,
+				setLoadingStateNewPost
+			)
+		)
 		if (resetForm) {
 			document.querySelector(`.${Styles.newPost_form}`).reset()
 			setFileData('')
@@ -53,20 +64,42 @@ const Home = ({ history }) => {
 		datos.append('id_usuario', usuario.id)
 		datos.append('imagen', fileData)
 		setResetForm(true)
-		dispatch(nuevaPublicacionAccion(datos, history, setLoading, setResetForm))
+		setLoadingStateNewPost(true)
+		dispatch(
+			nuevaPublicacionAccion(
+				datos,
+				history,
+				setLoading,
+				setResetForm,
+				setLoadingState
+			)
+		)
 	}
 
 	return (
 		<>
 			<div className={Styles.container}>
-				{publicaciones.length !== 0 ? (
-					<Post publicaciones={publicaciones} />
+				{loadingStateNewPost && (
+					<div className={Styles.loading_new_post_container}>
+						<FontAwesomeIcon icon={faSpinner} spin />
+					</div>
+				)}
+				{loadingState ? (
+					publicaciones.length !== 0 ? (
+						<Post publicaciones={publicaciones} />
+					) : (
+						<div className={Styles.noPost_container}>
+							<span className={Styles.noPost_icon}>
+								<FontAwesomeIcon icon={faCameraRetro} />
+							</span>
+							<h1 className={Styles.noPost_text}>
+								No hay publicaciones creadas
+							</h1>
+						</div>
+					)
 				) : (
-					<div className={Styles.noPost_container}>
-						<span className={Styles.noPost_icon}>
-							<FontAwesomeIcon icon={faCameraRetro} />
-						</span>
-						<h1 className={Styles.noPost_text}>No hay publicaciones creadas</h1>
+					<div className={Styles.preload_container}>
+						<FontAwesomeIcon icon={faSpinner} spin />
 					</div>
 				)}
 			</div>

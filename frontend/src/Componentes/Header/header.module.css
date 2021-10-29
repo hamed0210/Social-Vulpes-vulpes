@@ -72,22 +72,28 @@
 	position: relative;
 	display: flex;
 	align-items: center;
+	text-decoration: none;
+}
+
+.usuario_searcher_container:hover {
+	text-decoration: underline;
 }
 
 .usuario_searcher_container:not(:nth-last-child(1)) {
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 }
 
 .usuario_searcher_container:not(:nth-last-child(1))::after {
 	position: absolute;
 	content: '';
-	bottom: -2.5px;
+	bottom: -5px;
 	left: 50%;
 	width: 95%;
 	height: 1px;
 	background-color: var(--color-label);
 	opacity: 0.2;
 	transform: translateX(-50%);
+	pointer-events: none;
 }
 
 .usuario_searcher_avatar {
@@ -110,6 +116,7 @@
 
 .usuario_searcher_username {
 	font-size: 13px;
+	color: var(--color-label);
 }
 
 .mensajes_container {

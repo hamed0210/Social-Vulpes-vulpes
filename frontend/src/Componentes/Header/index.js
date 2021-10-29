@@ -67,7 +67,8 @@ function Header({ history }) {
 								{datoBuscado.length !== 0 &&
 									datoBuscado.map((el) => {
 										return (
-											<div
+											<Link
+												to={`/perfil/${el.username}`}
 												className={Styles.usuario_searcher_container}
 												key={el.id}
 											>
@@ -80,7 +81,7 @@ function Header({ history }) {
 												<span className={Styles.usuario_searcher_username}>
 													{el.username}
 												</span>
-											</div>
+											</Link>
 										)
 									})}
 							</div>
