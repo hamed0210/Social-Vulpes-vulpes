@@ -13,7 +13,7 @@ from function_jwt import write_token, valida_token
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:910210vaquero@localhost/social_vulpes_vulpes'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/social_vulpes_vulpes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['IMAGENES_SRC'] = 'src/imagenes'
@@ -340,6 +340,16 @@ def deleteUser(id):
 	try:
 		usuario = Usuarios.query.get(id)
 		if usuario:
+			Comentarios.query.filter(Comentarios.id_usuario == id).delete()
+			# Publicaciones.query.filter(Publicaciones.id_usuario == id).delete()
+			# for publicacion in publicaciones:
+			# 	comentarios = Comentarios.query.filter(Comentarios.codigo_publicacion == publicacion.codigo).all()
+			# 	for comentario in comentarios:
+			# 		 if comentario:
+			# 			 db.session.delete(usuario)
+				# Comentarios.query.filter(Comentarios.codigo_publicacion == publicacion.codigo).filter(Comentarios.id_usuario == id).delete()
+			# Comentarios.query.filter(Comentarios.codigo_publicacion == codigo).delete()
+			# Publicaciones.query.filter(Publicaciones.id_usuario == id).delete()
 			db.session.delete(usuario)
 			db.session.commit()
 			return jsonify({'message':'Usuario eliminado correctamente'})

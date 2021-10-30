@@ -12,7 +12,11 @@ const dataInicial = {
 // Types
 const OBTENER_USUARIOS_EXITO = 'OBTENER_USUARIOS_EXITO'
 const OBTENER_USUARIOS_ERROR = 'OBTENER_USUARIOS_ERROR'
-const CERRAR_SESION = 'CERRAR_SESION'
+const NUEVO_USUARIO_EXITO = 'NUEVO_USUARIO_EXITO'
+const NUEVO_USUARIO_ERROR = 'NUEVO_USUARIO_ERROR'
+const ELIMINAR_USUARIO_EXITO = 'ELIMINAR_USUARIO_EXITO'
+const ELIMINAR_USUARIO_MESSAGE_EXITO = 'ELIMINAR_USUARIO_MESSAGE_EXITO'
+const ELIMINAR_USUARIO_ERROR = 'ELIMINAR_USUARIO_ERROR'
 
 // Reducer
 export default function loginReducer(state = dataInicial, action) {
@@ -21,19 +25,42 @@ export default function loginReducer(state = dataInicial, action) {
 			return {
 				...state,
 				array: action.payload.array,
-				message: '',
 			}
 		case OBTENER_USUARIOS_ERROR:
 			return {
 				...state,
 				message: action.payload.message,
 			}
-		case CERRAR_SESION:
+		case NUEVO_USUARIO_EXITO:
 			return {
-				array: [],
+				...state,
 				message: action.payload.message,
+				success: true,
 			}
-		// return { ...dataInicial }
+		case NUEVO_USUARIO_ERROR:
+			return {
+				...state,
+				message: action.payload.message,
+				success: false,
+			}
+		case ELIMINAR_USUARIO_EXITO:
+			return {
+				...state,
+				message: action.payload.message,
+				success: true,
+			}
+		case ELIMINAR_USUARIO_MESSAGE_EXITO:
+			return {
+				...state,
+				message: action.payload.message,
+				success: true,
+			}
+		case ELIMINAR_USUARIO_ERROR:
+			return {
+				...state,
+				message: action.payload.message,
+				success: false,
+			}
 		default:
 			return state
 	}
@@ -63,14 +90,84 @@ export const obtenerUsuariosAccion = () => async (dispath) => {
 					message: 'Error de conexión con el servidor',
 				},
 			})
-		}
-		error.request.response &&
+		} else
 			dispath({
 				type: OBTENER_USUARIOS_ERROR,
 				payload: {
 					message: JSON.parse(error.request.response).message,
 				},
 			})
-		console.log(error)
+		// setTimeout(() => {
+		// 	dispath({
+		// 		type: OBTENER_USUARIOS_ERROR,
+		// 		payload: {
+		// 			message: '',
+		// 		},
+		// 	})
+		// }, 5000)
+		console.log(error.request)
 	}
 }
+
+export const eliminarUsuarioAccion =
+	(data, history, setLoading, setShowEliminar) => async (dispath) => {
+		// const token = getLocalStorage()
+		try {
+			setLoading(true)
+
+			const result = await axios.delete(`${URI}${PORT}/users/${data}`)
+
+			dispath({
+				type: ELIMINAR_USUARIO_EXITO,
+				payload: {
+					message: result.data.message,
+				},
+			})
+
+			setLoading(false)
+			setShowEliminar(false)
+
+			// setTimeout(() => {
+			// 	dispath({
+			// 		type: ELIMINAR_USUARIO_MESSAGE_EXITO,
+			// 		payload: {
+			// 			message: '',
+			// 		},
+			// 	})
+			// }, 5000)
+		} catch (error) {
+			// if (error.request.status === 401) {
+			// 	// removeLocalStorage()
+			// 	const message = 'La sesion a caducado, inicia sesion nuevamente'
+			// 	// dispath(cerrarSesionAccion(history, message))
+			// 	return history.push('/login')
+			// }
+			if (error.message === 'Network Error') {
+				dispath({
+					type: ELIMINAR_USUARIO_ERROR,
+					payload: {
+						message: 'Error de conexión con el servidor',
+					},
+				})
+			} else
+				dispath({
+					type: ELIMINAR_USUARIO_ERROR,
+					payload: {
+						message: JSON.parse(error.request.response).message,
+					},
+				})
+
+			setLoading(false)
+			setShowEliminar(false)
+
+			// setTimeout(() => {
+			// 	dispath({
+			// 		type: ELIMINAR_USUARIO_ERROR,
+			// 		payload: {
+			// 			message: '',
+			// 		},
+			// 	})
+			// }, 5000)
+			console.log(error.request)
+		}
+	}

@@ -55,11 +55,13 @@ function Header({ history }) {
 					</Link>
 				</div>
 				<div className={Styles.secundary}>
-					<span className={Styles.usuarios_link_container}>
-						<Link to={'/usuarios'} className={Styles.usuarios_link}>
-							Usuarios
-						</Link>
-					</span>
+					{usuarioStore.role !== 'User' && (
+						<span className={Styles.usuarios_link_container}>
+							<Link to={'/usuarios'} className={Styles.usuarios_link}>
+								Usuarios
+							</Link>
+						</span>
+					)}
 					<div className={Styles.searcher_container}>
 						<input
 							onChange={handleInputChange}
