@@ -13,7 +13,7 @@ from function_jwt import write_token, valida_token
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/social_vulpes_vulpes'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:910210vaquero@localhost/social_vulpes_vulpes'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['IMAGENES_SRC'] = 'src/imagenes'
@@ -516,6 +516,7 @@ def deletePost(codigo):
 	try:
 		publicacion = Publicaciones.query.get(codigo)
 		if publicacion:
+			comentarios = Comentarios.query.filter(Comentarios.codigo_publicacion == codigo).delete()
 			db.session.delete(publicacion)
 			db.session.commit()
 			return jsonify({'message':'Publicacion eliminada correctamente'})

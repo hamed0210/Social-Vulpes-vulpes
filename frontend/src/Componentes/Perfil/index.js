@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCameraRetro } from '@fortawesome/free-solid-svg-icons'
 
 import Styles from './perfil.module.css'
+import { obtenerUsuariosAccion } from 'redux/usuariosDuck'
+import Preloader from 'Componentes/Preloader'
 
 const Perfil = ({ match }) => {
+	const dispatch = useDispatch()
 	const userStore = useSelector((store) => store.usuarios.array)
 	const [datos, setDatos] = useState()
 
@@ -16,7 +19,11 @@ const Perfil = ({ match }) => {
 			})
 	}, [userStore, match])
 
-	return (
+	useEffect(() => {
+		dispatch(obtenerUsuariosAccion())
+	}, [dispatch])
+
+	return userStore.length !== 0 ? (
 		<div className={Styles.container}>
 			<div className={Styles.info_usuario_container}>
 				<div className={Styles.avatar_container}>
@@ -61,6 +68,8 @@ const Perfil = ({ match }) => {
 				</div>
 			)}
 		</div>
+	) : (
+		<Preloader />
 	)
 }
 

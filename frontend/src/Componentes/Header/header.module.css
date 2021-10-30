@@ -40,6 +40,25 @@
 	align-items: center;
 }
 
+.usuarios_link_container {
+	display: flex;
+	align-items: center;
+	margin-right: 30px;
+}
+
+.usuarios_link {
+	font-size: 14px;
+	font-family: 'Antonio', sans-serif;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: var(--color-primary);
+}
+
+.usuarios_link:hover {
+	text-decoration: underline;
+}
+
 .searcher_container {
 	position: relative;
 	display: flex;
